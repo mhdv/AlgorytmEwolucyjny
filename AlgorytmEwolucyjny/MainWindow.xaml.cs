@@ -19,6 +19,7 @@ namespace AlgorytmEwolucyjny
         {
             equationString = txtEquation.Text;
             equation = new org.mariuszgromada.math.mxparser.Expression(equationString);
+            tmpSolution.Text = "Rozwiązanie: " + equation.calculate().ToString();
         }
     }
 }
