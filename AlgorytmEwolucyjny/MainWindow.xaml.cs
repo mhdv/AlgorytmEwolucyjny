@@ -41,7 +41,8 @@ namespace AlgorytmEwolucyjny
                 {
                     if (t.tokenStr.Contains("x"))
                     {
-                        argumentsString.Add(t.tokenStr);
+                        if(!argumentsString.Contains(t.tokenStr))
+                            argumentsString.Add(t.tokenStr);
                     }
                 }
             }
