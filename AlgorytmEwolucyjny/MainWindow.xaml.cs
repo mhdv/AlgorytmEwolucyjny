@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using org.mariuszgromada.math.mxparser;
 
 namespace AlgorytmEwolucyjny
 {
@@ -8,7 +9,7 @@ namespace AlgorytmEwolucyjny
     public partial class MainWindow : Window
     {
         public string equationString;
-        public Expression equation;
+        public org.mariuszgromada.math.mxparser.Expression equation;
         public MainWindow()
         {
             InitializeComponent();
@@ -17,7 +18,7 @@ namespace AlgorytmEwolucyjny
         private void btnEquation_Click(object sender, RoutedEventArgs e)
         {
             equationString = txtEquation.Text;
-            equation = new Expression(equationString);
+            equation = new org.mariuszgromada.math.mxparser.Expression(equationString);
         }
     }
 }
