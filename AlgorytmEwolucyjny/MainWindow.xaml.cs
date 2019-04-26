@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Input;
 using org.mariuszgromada.math.mxparser;
 using org.mariuszgromada.math.mxparser.parsertokens;
 
@@ -18,15 +20,19 @@ namespace AlgorytmEwolucyjny
             InitializeComponent();
         }
 
+        //
+        // Główna funkcja programu - po naciśnięciu zatwierdź - Taki main
+        //
         private void btnEquation_Click(object sender, RoutedEventArgs e)
         {
+            // Równanie w postaci łańcucha znaków
             equationString = txtEquation.Text;
-            //equationString = "f(x) = " + equationString;
-            //Function eq = new Function(equationString);
-            
+            // Tymczasowe równanie - później jest nadpisywane
             eq = new org.mariuszgromada.math.mxparser.Expression(equationString);
+
+            // Odczytywanie argumentów wpisanego równania
             List<Token> tokensList = eq.getCopyOfInitialTokens();
-            List<Argument> arguments = new List<Argument>();
+            List<List<Argument>> allarguments = new List<List<Argument>>();
             tmpSolution.Text = "";
             foreach (Token t in tokensList)
             {
@@ -34,46 +40,80 @@ namespace AlgorytmEwolucyjny
                 {
                     if (t.tokenStr.Contains("x"))
                     {
-                        tmpSolution.Text += ("token = " + t.tokenStr + ", hint = " + t.looksLike) + "\n";
                         argumentsString.Add(t.tokenStr);
                     }
                 }
             }
 
+            // Tworzenie populacji i jej inicjalizacja
             Population population = new Population();
-            population.initPopulation(argumentsString.ToArray().Length);
+            population.initPopulation(argumentsString.ToArray().Length, System.Convert.ToInt32(txtPopulationSize.Text));
 
-
+            // Tworzenie listy równań
             int i = 0;
-            //for(int j = 0; j < argumentsString.ToArray().Length; j++)
-            //{
+            for (int j = 0; j < population.populationSize; j++)
+            {
+                List<Argument> arguments = new List<Argument>();
                 foreach (var arg in argumentsString)
                 {
-                    Argument tmp = new Argument(arg + " = " + population.subjects[0].values[i]);
+                    Argument tmp = new Argument(arg + " = " + population.subjects[j].values[i]);
+                    
                     arguments.Add(tmp);
                     i++;
                 }
-            //}
-
-            // to musi być w pętli
-            eq = new org.mariuszgromada.math.mxparser.Expression(equationString,arguments.ToArray());
-
-            if (!eq.checkLexSyntax())
-            {
-                tmpSolution.Text = "Błąd składni - używaj składni środowiska MATLAB/WOLFRAM";
-                return;
-            }
-            if (!eq.checkSyntax())
-            {
-                tmpSolution.Text = "Wprowadzaj tylko zmienne x1,x2,x3...";
-                return;
+                allarguments.Add(arguments);
+                i = 0;
             }
 
-            
+            // Tworzenie zagnieżdżonej listy wyrażeń
+            List<org.mariuszgromada.math.mxparser.Expression> equations = new List<org.mariuszgromada.math.mxparser.Expression>();
+            for (int j = 0; j < population.populationSize; j++)
+            {
+                org.mariuszgromada.math.mxparser.Expression tmp = new org.mariuszgromada.math.mxparser.Expression(equationString, allarguments.ToArray()[j].ToArray());
+                equations.Add(tmp);
+            }
+
+
+            // Sprawdzanie składni do parsera
+            foreach (var eq in equations)
+            {
+                if (!eq.checkLexSyntax())
+                {
+                    tmpSolution.Text = "Błąd składni - używaj składni środowiska MATLAB/WOLFRAM";
+                    return;
+                }
+                if (!eq.checkSyntax())
+                {
+                    tmpSolution.Text = "Wprowadzaj tylko zmienne x1,x2,x3...";
+                    return;
+                }
+            }
+
+
+
             // tymczasowe rozwiązanie równania
-            tmpSolution.Text = "Rozwiązanie: " + eq.calculate().ToString() + " DLA:\n"
-                              + "x1 = " + population.subjects[9].values[0] + "\n"
-                              + "x2 = " + population.subjects[9].values[1] + "\n";
+            tmpSolution.Text = "Rozwiązania dla poszczególnych osobników przy populacji wielkości " + txtPopulationSize.Text + ":\n";
+            for(int j = 0; j<population.populationSize; j++)
+            {
+                tmpSolution.Text += "Rozwiązanie osobnika " + (j + 1).ToString() + ": " + equations.ToArray()[j].calculate() + "\n";
+            }
+
+
+            // Czyszczenie przed kolejnym wywołaniem
+            argumentsString = new List<string>();
+            equationString = "";
+            eq = new org.mariuszgromada.math.mxparser.Expression();
+
+            System.GC.Collect();
+        }
+
+        //
+        //  Funkcja zapobiega wpisywaniu liter w wielkości populacji
+        //
+        private new void PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
         }
     }
 }

@@ -10,21 +10,24 @@ namespace AlgorytmEwolucyjny
     {
         uint nGenes;
         uint nPairs;
+        static Random tmp = new Random(10);
         public List<double> values = new List<double>();
-        //double parameters; ????
+        //double parameters; ???? do sprawdzenia
         double adaptation;
 
+
+        // Inicjalizacja osobników
         public void initSubject(int nValues)
         {
-            // póki co sztywno - potem ustawianie w programie
+            // Do poprawy - to nie powinno być na sztywno + trzeba doczytać do czego to
             nGenes = 10;
             nPairs = 2;
             adaptation = 0;
-            //
-            Random tmp = new Random();
-            for(int i = 0; i < nValues; i++) // doczytać wartości
+            // Losowe wartości dla osobnika - doczytać z jakiego zakresu powinny być
+            for(int i = 0; i < nValues; i++)
             {
                 values.Add(tmp.Next(0, 100));
+                System.Console.WriteLine(values[i]);
             }
         }
     }

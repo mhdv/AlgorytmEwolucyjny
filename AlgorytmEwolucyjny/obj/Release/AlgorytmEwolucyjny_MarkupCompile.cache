@@ -4,11 +4,11 @@
 winexe
 C#
 .cs
-C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\obj\Debug\
+C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\obj\Release\
 AlgorytmEwolucyjny
 none
 false
-DEBUG;TRACE
+TRACE
 C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\App.xaml
 11151548125
 
@@ -16,5 +16,5 @@ C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\App.xaml
 142119667991
 MainWindow.xaml;
 
-False
+True
 

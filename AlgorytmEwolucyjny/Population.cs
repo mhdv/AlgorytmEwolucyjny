@@ -8,14 +8,17 @@ namespace AlgorytmEwolucyjny
 {
     public class Population
     {
-        uint PopulationSize;
+        public int populationSize;
         public List<Subject> subjects = new List<Subject>();
 
-        public void initPopulation(int nValues)
+        //
+        // Inicjalizacja populacji
+        //
+        public void initPopulation(int nValues, int popSize)
         {
             // na sztywno wielkość populacji - do wyboru w programie potem
-            PopulationSize = 10;
-            for (int i = 0; i < PopulationSize; i++)
+            populationSize = popSize;
+            for (int i = 0; i < populationSize; i++)
             {
                 Subject newSubject = new Subject();
                 newSubject.initSubject(nValues);
