@@ -12,6 +12,7 @@ namespace AlgorytmEwolucyjny
         uint nPairs;
         static Random tmp = new Random(10);
         public List<double> values = new List<double>();
+        public List<string> stringValues = new List<string>();
         public double solution;
         //double parameters; ???? do sprawdzenia
         double adaptation;
@@ -27,8 +28,19 @@ namespace AlgorytmEwolucyjny
             // Losowe wartości dla osobnika - doczytać z jakiego zakresu powinny być
             for(int i = 0; i < nValues; i++)
             {
-                values.Add(tmp.Next(0, 100));
-                System.Console.WriteLine(values[i]);
+                values.Add((tmp.NextDouble() * 10) - 5);
+
+                // DO TESTÓW DLA PRZYKŁADU
+                //values.Add(-0.56);
+            }
+            valuesToString();
+        }
+
+        private void valuesToString()
+        {
+            foreach(var val in values)
+            {
+                stringValues.Add(val.ToString("0.0000", System.Globalization.CultureInfo.InvariantCulture));
             }
         }
     }

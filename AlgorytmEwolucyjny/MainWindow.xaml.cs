@@ -6,6 +6,21 @@ using System.Windows.Input;
 using org.mariuszgromada.math.mxparser;
 using org.mariuszgromada.math.mxparser.parsertokens;
 
+/*
+
+PRZYKŁADOWE RÓWNANIE: x1^4+x2^4-0.62*x1^2-0.62*x2^2
+ROZWIĄZANIE: pkt(-0.56,-0.56), wartość = -0.19
+
+*/
+
+/*
+
+LISTA AKTUALNYCH PROBLEMÓW:
+- calculate() nie zwraca wartości ujemnych?
+
+
+*/
+
 namespace AlgorytmEwolucyjny
 {
     /// <summary>
@@ -39,7 +54,7 @@ namespace AlgorytmEwolucyjny
             {
                 if (t.tokenTypeId == Token.NOT_MATCHED)
                 {
-                    if (t.tokenStr.Contains("x"))
+                    if (t.tokenStr.Contains("x") && t.tokenStr.Length > 1)
                     {
                         if(!argumentsString.Contains(t.tokenStr))
                             argumentsString.Add(t.tokenStr);
@@ -58,8 +73,7 @@ namespace AlgorytmEwolucyjny
                 List<Argument> arguments = new List<Argument>();
                 foreach (var arg in argumentsString)
                 {
-                    Argument tmp = new Argument(arg + " = " + population.subjects[j].values[i]);
-                    
+                    Argument tmp = new Argument(arg + " = " + population.subjects[j].values[i]);            
                     arguments.Add(tmp);
                     i++;
                 }
@@ -67,12 +81,22 @@ namespace AlgorytmEwolucyjny
                 i = 0;
             }
 
+            // Oddzielanie argumentów przecinkami
+            string commaSeparatedArguments = string.Join(", ", argumentsString);
             // Tworzenie zagnieżdżonej listy wyrażeń
             List<org.mariuszgromada.math.mxparser.Expression> equations = new List<org.mariuszgromada.math.mxparser.Expression>();
             for (int j = 0; j < population.populationSize; j++)
             {
-                org.mariuszgromada.math.mxparser.Expression tmp = new org.mariuszgromada.math.mxparser.Expression(equationString, allarguments.ToArray()[j].ToArray());
+                Function f = new Function("f(" + commaSeparatedArguments + ") = " + equationString);
+                org.mariuszgromada.math.mxparser.Expression tmp = new org.mariuszgromada.math.mxparser.Expression("f("+ string.Join(", ", population.subjects[j].stringValues) + ")", f);
                 equations.Add(tmp);
+
+                //
+                //  DEBUG
+                //
+                //System.Console.WriteLine(tmp.getExpressionString());
+                //tmp.setDescription("Example - Debug");
+                //tmp.setVerboseMode();
             }
 
 
@@ -106,15 +130,16 @@ namespace AlgorytmEwolucyjny
             tmpSolution.Text = "Rozwiązania dla poszczególnych osobników przy populacji wielkości " + txtPopulationSize.Text + ":\n";
             for(int j = 0; j<population.populationSize; j++)
             {
-                tmpSolution.Text += "Rozwiązanie osobnika " + (j + 1).ToString() + ": " + population.subjects[j].solution + "\n";
+                tmpSolution.Text += "#######################################\n";
+                tmpSolution.Text += "(" + commaSeparatedArguments + ") = " + "(" + string.Join(", ", population.subjects[j].stringValues) + ")" + "\n";
+                tmpSolution.Text += "Rozwiązanie " + (j + 1).ToString() + "-go osobnika:   " + population.subjects[j].solution.ToString("0.0000", System.Globalization.CultureInfo.InvariantCulture) + "\n";
             }
             
             // Czyszczenie przed kolejnym wywołaniem
             argumentsString = new List<string>();
             equationString = "";
             eq = new org.mariuszgromada.math.mxparser.Expression();
-
-            System.GC.Collect();
+            System.GC.Collect(); // <- Garbage Collector
         }
 
         //
