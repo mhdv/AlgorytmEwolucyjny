@@ -12,6 +12,7 @@ namespace AlgorytmEwolucyjny
         uint nPairs;
         static Random tmp = new Random(10);
         public List<double> values = new List<double>();
+        public double solution;
         //double parameters; ???? do sprawdzenia
         double adaptation;
 

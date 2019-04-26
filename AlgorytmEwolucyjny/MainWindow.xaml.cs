@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
@@ -89,16 +90,24 @@ namespace AlgorytmEwolucyjny
                 }
             }
 
+            // Zapisywanie rozwiązania danego osobnika w jego klasie
+            i = 0;
+            foreach (var eq in equations.ToArray())
+            {
+                population.subjects[i].solution = eq.calculate();
+                i++;
+            }
 
+            // Sortowanie rosnąco
+            population.subjects = population.subjects.OrderBy(o => o.solution).ToList();
 
             // tymczasowe rozwiązanie równania
             tmpSolution.Text = "Rozwiązania dla poszczególnych osobników przy populacji wielkości " + txtPopulationSize.Text + ":\n";
             for(int j = 0; j<population.populationSize; j++)
             {
-                tmpSolution.Text += "Rozwiązanie osobnika " + (j + 1).ToString() + ": " + equations.ToArray()[j].calculate() + "\n";
+                tmpSolution.Text += "Rozwiązanie osobnika " + (j + 1).ToString() + ": " + population.subjects[j].solution + "\n";
             }
-
-
+            
             // Czyszczenie przed kolejnym wywołaniem
             argumentsString = new List<string>();
             equationString = "";
