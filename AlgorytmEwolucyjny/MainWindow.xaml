@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
 	<Grid>
-		<TextBox x:Name="txtEquation" HorizontalAlignment="Left" Height="22" Margin="10,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="772"/>
+		<TextBox x:Name="txtEquation" HorizontalAlignment="Left" Height="22" Margin="10,10,0,0" TextWrapping="Wrap" Text="x1+x2+x3+x4" VerticalAlignment="Top" Width="772"/>
 		<Button x:Name="btnEquation" Content="Zatwierdź" HorizontalAlignment="Left" Margin="707,37,0,0" VerticalAlignment="Top" Width="75" Click="btnEquation_Click"/>
 		<TextBlock x:Name="tmpSolution" HorizontalAlignment="Left" Margin="10,37,0,0" TextWrapping="Wrap" Text="Rozwiązanie: " VerticalAlignment="Top" Height="179" Width="692"/>
 

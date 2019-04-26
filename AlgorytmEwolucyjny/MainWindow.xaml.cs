@@ -55,6 +55,7 @@ namespace AlgorytmEwolucyjny
                 }
             //}
 
+            // to musi być w pętli
             eq = new org.mariuszgromada.math.mxparser.Expression(equationString,arguments.ToArray());
 
             if (!eq.checkLexSyntax())
@@ -68,7 +69,7 @@ namespace AlgorytmEwolucyjny
                 return;
             }
 
-
+            
             // tymczasowe rozwiązanie równania
             tmpSolution.Text = "Rozwiązanie: " + eq.calculate().ToString() + " DLA:\n"
                               + "x1 = " + population.subjects[9].values[0] + "\n"
