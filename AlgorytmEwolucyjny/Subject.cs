@@ -8,23 +8,21 @@ namespace AlgorytmEwolucyjny
 {
     public class Subject
     {
-        uint nGenes;
-        uint nPairs;
+        public int nGenes;
+        //uint nPairs;
         static Random tmp = new Random(10);
         public List<double> values = new List<double>();
         public List<string> stringValues = new List<string>();
         public double solution;
         //double parameters; ???? do sprawdzenia
-        double adaptation;
+        //double adaptation; ???? do sprawdzenia
 
 
         // Inicjalizacja osobników
         public void initSubject(int nValues)
         {
             // Do poprawy - to nie powinno być na sztywno + trzeba doczytać do czego to
-            nGenes = 10;
-            nPairs = 2;
-            adaptation = 0;
+            nGenes = nValues;
             // Losowe wartości dla osobnika - doczytać z jakiego zakresu powinny być
             for(int i = 0; i < nValues; i++)
             {
@@ -36,7 +34,7 @@ namespace AlgorytmEwolucyjny
             valuesToString();
         }
 
-        private void valuesToString()
+        public void valuesToString()
         {
             foreach(var val in values)
             {
