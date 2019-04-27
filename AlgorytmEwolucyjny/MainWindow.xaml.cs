@@ -63,6 +63,7 @@ namespace AlgorytmEwolucyjny
             comboFunctions.Items.Add("100*(x2-x1^2)^2+(1-x1)^2");
             comboFunctions.Items.Add("(x1-x2+x3)^2+(-x1+x2+x3)^2+(x1+x2-x3)^2");
             comboFunctions.Items.Add("4*x1^2-2.1*x1^4+(1/3)*x1^6+x1*x2-4*x2^2+4*x2^4");
+            comboFunctions.Items.Add("sin(5.1*pi*x1+0.5)^6");
             // Initialize comboReproductionMethod
             comboReproductionMethod.Items.Add("Domyślna");
         }
