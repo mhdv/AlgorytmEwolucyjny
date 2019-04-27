@@ -85,7 +85,7 @@ namespace AlgorytmEwolucyjny
         private Subject ReproduceDefault(Subject first, Subject second)
         {
             Subject child = new Subject();
-            if ((tmp.NextDouble() * actualPopulation.populationSize) < 0.1)
+            if ((tmp.NextDouble() * actualPopulation.populationSize) < 0.2)
             {
                 child.initSubject(first.nGenes);
                 return child;
@@ -95,7 +95,7 @@ namespace AlgorytmEwolucyjny
                 child.nGenes = first.nGenes;
                 for (int i = 0; i < first.nGenes; i++)
                 {
-                    child.values.Add(0.7 * first.values.ToArray()[i] + 0.3 * second.values.ToArray()[i] + 0.02 * ((tmp.NextDouble() * 20) - 10));
+                    child.values.Add(0.6 * first.values.ToArray()[i] + 0.4 * second.values.ToArray()[i] + 0.01 * ((tmp.NextDouble() * 20) - 10));
                 }
                 child.stringValues.Clear();
                 child.valuesToString();
