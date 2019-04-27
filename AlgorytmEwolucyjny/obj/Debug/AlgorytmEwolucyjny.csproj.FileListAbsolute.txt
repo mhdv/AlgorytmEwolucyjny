@@ -32,3 +32,4 @@ C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\obj\Debug
 C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\obj\Debug\AlgorytmEwolucyjny.csproj.CopyComplete
 C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\obj\Debug\AlgorytmEwolucyjny.exe
 C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\obj\Debug\AlgorytmEwolucyjny.pdb
+C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\obj\Debug\GeneratedInternalTypeHelper.g.cs

@@ -132,10 +132,6 @@ namespace AlgorytmEwolucyjny
                     equations.Add(tmp);
 
 
-                    ////DEBUG
-                    //System.Console.WriteLine(tmp.getExpressionString());
-                    //tmp.setDescription("Example - Debug");
-                    //tmp.setVerboseMode();
                 }
 
 
@@ -160,12 +156,27 @@ namespace AlgorytmEwolucyjny
                 {
                     population.subjects[i].solution = equa.calculate();
                     i++;
+                    ////DEBUG
+                    //System.Console.WriteLine(equa.getExpressionString());
+                    //equa.setDescription("Example - Debug");
+                    //equa.setVerboseMode();
                 }
 
                 // Sortowanie rosnąco
                 population.subjects = population.subjects.OrderBy(o => o.solution).ToList();
-                
-                population = algorithm.RunAlgorithm(population);
+
+                Population pop = algorithm.RunAlgorithm(population);
+                population.subjects.Clear();
+                population = pop;
+
+                // Tworzenie zagnieżdżonej listy wyrażeń
+                equations.Clear();
+                equations = new List<org.mariuszgromada.math.mxparser.Expression>();
+                for (int j = 0; j < population.populationSize; j++)
+                {
+                    org.mariuszgromada.math.mxparser.Expression tmp = new org.mariuszgromada.math.mxparser.Expression("f(" + string.Join(", ", population.subjects[j].stringValues) + ")", f);
+                    equations.Add(tmp);
+                }
                 i = 0;
                 foreach (var equa in equations)
                 {
@@ -175,14 +186,14 @@ namespace AlgorytmEwolucyjny
                 equations.Clear();
             }
             population.subjects = population.subjects.OrderBy(o => o.solution).ToList();
-            //Console.WriteLine(population.subjects.ToArray()[5].solution);
+            Console.WriteLine(population.subjects.ToArray()[5].solution);
 
             // tymczasowe rozwiązanie równania
             tmpSolution.Text = "Znalezione rozwiązanie przy populacji wielkości " + txtPopulationSize.Text + ":\n";
             
             tmpSolution.Text += "#######################################\n";
             tmpSolution.Text += "(" + commaSeparatedArguments + ") = " + "(" + string.Join(", ", population.subjects[0].stringValues) + ")" + "\n";
-            tmpSolution.Text += "Rozwiązanie:   " + population.subjects[0].solution.ToString("0.0000", System.Globalization.CultureInfo.InvariantCulture) + "\n";
+            tmpSolution.Text += "Rozwiązanie:   " + population.subjects[0].solution.ToString("0.00000000", System.Globalization.CultureInfo.InvariantCulture) + "\n";
             tmpSolution.Text += "#######################################\n";
             
             

@@ -10,7 +10,7 @@ namespace AlgorytmEwolucyjny
     {
         public int nGenes;
         //uint nPairs;
-        static Random tmp = new Random(10);
+        static Random tmp = new Random(333);
         public List<double> values = new List<double>();
         public List<string> stringValues = new List<string>();
         public double solution;
@@ -26,7 +26,7 @@ namespace AlgorytmEwolucyjny
             // Losowe wartości dla osobnika - doczytać z jakiego zakresu powinny być
             for(int i = 0; i < nValues; i++)
             {
-                values.Add((tmp.NextDouble() * 10) - 5);
+                values.Add((tmp.NextDouble() * 20) - 10);
 
                 // DO TESTÓW DLA PRZYKŁADU
                 //values.Add(-0.56);
@@ -38,7 +38,7 @@ namespace AlgorytmEwolucyjny
         {
             foreach(var val in values)
             {
-                stringValues.Add(val.ToString("0.0000", System.Globalization.CultureInfo.InvariantCulture));
+                stringValues.Add(val.ToString("0.00000000", System.Globalization.CultureInfo.InvariantCulture));
             }
         }
     }

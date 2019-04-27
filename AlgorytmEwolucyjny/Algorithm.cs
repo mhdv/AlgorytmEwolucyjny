@@ -10,8 +10,8 @@ namespace AlgorytmEwolucyjny
     {
         public string method;
         public int iterations;
-        Population actualPopulation = new Population();
-        Population nextPopulation = new Population();
+        Population actualPopulation;
+        Population nextPopulation;
         static Random tmp = new Random(10);
 
         public void AlgorithmInit(string meth, int iter)
@@ -95,7 +95,7 @@ namespace AlgorytmEwolucyjny
                 child.nGenes = first.nGenes;
                 for (int i = 0; i < first.nGenes; i++)
                 {
-                    child.values.Add(0.7 * first.values.ToArray()[i] + 0.3 * second.values.ToArray()[i] + 0.05 * ((tmp.NextDouble() * 10) - 5));
+                    child.values.Add(0.7 * first.values.ToArray()[i] + 0.3 * second.values.ToArray()[i] + 0.02 * ((tmp.NextDouble() * 20) - 10));
                 }
                 child.stringValues.Clear();
                 child.valuesToString();
