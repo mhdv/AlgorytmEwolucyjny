@@ -12,7 +12,7 @@ namespace AlgorytmEwolucyjny
         public int iterations;
         Population actualPopulation;
         Population nextPopulation;
-        static Random tmp = new Random(10);
+        static Random tmp = new Random(333);
 
         public void AlgorithmInit(string meth, int iter)
         {
@@ -33,7 +33,7 @@ namespace AlgorytmEwolucyjny
 
         public Population RunAlgorithm(Population pop)
         {
-            tmp = new Random(10);
+            tmp = new Random(333);
             actualPopulation = pop;
             nextPopulation = new Population();
             nextPopulation.populationSize = actualPopulation.populationSize;

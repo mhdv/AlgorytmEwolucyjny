@@ -78,15 +78,17 @@ namespace AlgorytmEwolucyjny
                 MessageBox.Show("Populacja powinna być większa niż 5!");
                 return;
             }
+            // Definiowanie algorytmu
             Algorithm algorithm = new Algorithm();
+
             // Równanie w postaci łańcucha znaków
             equationString = txtEquation.Text;
+
             // Tymczasowe równanie - później jest nadpisywane
             eq = new org.mariuszgromada.math.mxparser.Expression(equationString);
 
             // Odczytywanie argumentów wpisanego równania
             List<Token> tokensList = eq.getCopyOfInitialTokens();
-            //List<List<Argument>> allarguments = new List<List<Argument>>();
             tmpSolution.Text = "";
             foreach (Token t in tokensList)
             {
@@ -100,101 +102,45 @@ namespace AlgorytmEwolucyjny
                 }
             }
 
-            // Oddzielanie argumentów przecinkami
+            // Oddzielanie argumentów przecinkami oraz utworzenie funkcji
             string commaSeparatedArguments = string.Join(", ", argumentsString);
             Function f = new Function("f(" + commaSeparatedArguments + ") = " + equationString);
-            // Tworzenie populacji i jej inicjalizacja
+
+            // Tworzenie populacji i jej inicjalizacja / inicjalizacja algorytmu
             Population population = new Population();
             algorithm.AlgorithmInit(comboReproductionMethod.Text, System.Int32.Parse(txtIterations.Text));
             population.initPopulation(argumentsString.ToArray().Length, System.Convert.ToInt32(txtPopulationSize.Text));
+
             for (int k = 0; k < System.Int32.Parse(txtIterations.Text); k++)
             {
-                //// Tworzenie listy równań
-                //int i = 0;
-                //for (int j = 0; j < population.populationSize; j++)
-                //{
-                //    List<Argument> arguments = new List<Argument>();
-                //    foreach (var arg in argumentsString)
-                //    {
-                //        Argument tmp = new Argument(arg + " = " + population.subjects[j].values[i]);
-                //        arguments.Add(tmp);
-                //        i++;
-                //    }
-                //    allarguments.Add(arguments);
-                //    i = 0;
-                //}
-
-                // Tworzenie zagnieżdżonej listy wyrażeń
-                List<org.mariuszgromada.math.mxparser.Expression> equations = new List<org.mariuszgromada.math.mxparser.Expression>();
-                for (int j = 0; j < population.populationSize; j++)
-                {
-                    org.mariuszgromada.math.mxparser.Expression tmp = new org.mariuszgromada.math.mxparser.Expression("f(" + string.Join(", ", population.subjects[j].stringValues) + ")", f);
-                    equations.Add(tmp);
-
-
-                }
-
-
-                // Sprawdzanie składni do parsera
-                //foreach (var eq in equations)
-                //{
-                //    if (!eq.checkLexSyntax())
-                //    {
-                //        tmpSolution.Text = "Błąd składni - używaj składni środowiska MATLAB/WOLFRAM";
-                //        return;
-                //    }
-                //    if (!eq.checkSyntax())
-                //    {
-                //        tmpSolution.Text = "Wprowadzaj tylko zmienne x1,x2,x3...";
-                //        return;
-                //    }
-                //}
-
-                // Zapisywanie rozwiązania danego osobnika w jego klasie
-                int i = 0;
-                foreach (var equa in equations)
-                {
-                    population.subjects[i].solution = equa.calculate();
-                    i++;
-                    ////DEBUG
-                    //System.Console.WriteLine(equa.getExpressionString());
-                    //equa.setDescription("Example - Debug");
-                    //equa.setVerboseMode();
-                }
-
-                // Sortowanie rosnąco
+                // Sortowanie według najlepszych rozwiązań
                 population.subjects = population.subjects.OrderBy(o => o.solution).ToList();
 
-                Population pop = algorithm.RunAlgorithm(population);
-                population.subjects.Clear();
-                population = pop;
+                // Uruchomienie algorytmu
+                population = algorithm.RunAlgorithm(population);
 
-                // Tworzenie zagnieżdżonej listy wyrażeń
-                equations.Clear();
-                equations = new List<org.mariuszgromada.math.mxparser.Expression>();
-                for (int j = 0; j < population.populationSize; j++)
+                // Tworzenie wyrażeń oraz obliczanie rozwiązań aktualnej populacji
+                foreach(var sub in population.subjects)
                 {
-                    org.mariuszgromada.math.mxparser.Expression tmp = new org.mariuszgromada.math.mxparser.Expression("f(" + string.Join(", ", population.subjects[j].stringValues) + ")", f);
-                    equations.Add(tmp);
+                    org.mariuszgromada.math.mxparser.Expression equa = new org.mariuszgromada.math.mxparser.Expression("f(" + string.Join(", ", sub.stringValues) + ")", f);
+                    sub.solution = equa.calculate();
                 }
-                i = 0;
-                foreach (var equa in equations)
-                {
-                    population.subjects[i].solution = equa.calculate();
-                    i++;
-                }
-                equations.Clear();
             }
             population.subjects = population.subjects.OrderBy(o => o.solution).ToList();
-            Console.WriteLine(population.subjects.ToArray()[5].solution);
+            List<Subject> solutions = new List<Subject>();
+            solutions.Add(population.subjects[0]);
+            solutions.AddRange(CheckOtherSolutions(population.subjects[0]));
 
             // tymczasowe rozwiązanie równania
-            tmpSolution.Text = "Znalezione rozwiązanie przy populacji wielkości " + txtPopulationSize.Text + ":\n";
+            tmpSolution.Text = "Znalezione rozwiązania przy populacji wielkości " + txtPopulationSize.Text + ":\n";
             
-            tmpSolution.Text += "#######################################\n";
-            tmpSolution.Text += "(" + commaSeparatedArguments + ") = " + "(" + string.Join(", ", population.subjects[0].stringValues) + ")" + "\n";
-            tmpSolution.Text += "Rozwiązanie:   " + population.subjects[0].solution.ToString("0.00000000", System.Globalization.CultureInfo.InvariantCulture) + "\n";
-            tmpSolution.Text += "#######################################\n";
+            foreach(var sol in solutions)
+            {
+                tmpSolution.Text += "#######################################\n";
+                tmpSolution.Text += "(" + commaSeparatedArguments + ") = " + "(" + string.Join(", ", sol.stringValues) + ")" + "\n";
+                tmpSolution.Text += "Rozwiązanie:   " + sol.solution.ToString("0.00000000", System.Globalization.CultureInfo.InvariantCulture) + "\n";
+                tmpSolution.Text += "#######################################\n";
+            }
             
             
             // Czyszczenie przed kolejnym wywołaniem
@@ -219,6 +165,26 @@ namespace AlgorytmEwolucyjny
         {
             if (comboFunctions.SelectedIndex != 0)
                 txtEquation.Text = comboFunctions.SelectedItem.ToString();
+        }
+
+        private List<Subject> CheckOtherSolutions(Subject best)
+        {
+            List<Subject> listOfAlternatives = new List<Subject>();
+            string commaSeparatedArguments = string.Join(", ", argumentsString);
+            Function f = new Function("f(" + commaSeparatedArguments + ") = " + equationString);
+            Subject potentialAlternative = new Subject();
+            potentialAlternative.values = best.values.Select(i => -1 * i).ToList();
+            potentialAlternative.valuesToString();
+            org.mariuszgromada.math.mxparser.Expression equa = new org.mariuszgromada.math.mxparser.Expression("f(" + string.Join(", ", potentialAlternative.stringValues) + ")", f);
+            potentialAlternative.solution = equa.calculate();
+            
+            if(potentialAlternative.solution == best.solution)
+            {
+                listOfAlternatives.Add(potentialAlternative);
+                return listOfAlternatives;
+            }
+
+            return new List<Subject>();
         }
     }
 }
