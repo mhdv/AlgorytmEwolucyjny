@@ -66,6 +66,7 @@ namespace AlgorytmEwolucyjny
             comboFunctions.Items.Add("sin(5.1*pi*x1+0.5)^6");
             // Initialize comboReproductionMethod
             comboReproductionMethod.Items.Add("Domyślna");
+            comboReproductionMethod.Items.Add("Krzyżowanie uśredniające");
         }
 
         //
@@ -108,7 +109,7 @@ namespace AlgorytmEwolucyjny
 
             // Tworzenie populacji i jej inicjalizacja / inicjalizacja algorytmu
             Population population = new Population();
-            algorithm.AlgorithmInit(comboReproductionMethod.Text, System.Int32.Parse(txtIterations.Text));
+            algorithm.AlgorithmInit(comboReproductionMethod.SelectedIndex, System.Int32.Parse(txtIterations.Text));
             population.initPopulation(argumentsString.ToArray().Length, System.Convert.ToInt32(txtPopulationSize.Text));
 
             for (int k = 0; k < System.Int32.Parse(txtIterations.Text); k++)

@@ -8,24 +8,20 @@ namespace AlgorytmEwolucyjny
 {
     public class Algorithm
     {
-        public string method;
+        public int method;
         public int iterations;
         Population actualPopulation;
         Population nextPopulation;
         static Random tmp = new Random(333);
 
-        public void AlgorithmInit(string meth, int iter)
+        public void AlgorithmInit(int meth, int iter)
         {
-            if (meth == "Domyślna")
-                method = "default";
-            else
-                method = meth;
+            method = meth;
             iterations = iter;
         }
 
         public void ClearAlgorithm()
         {
-            method = "";
             iterations = 0;
             actualPopulation = new Population();
             nextPopulation = new Population();
@@ -73,8 +69,20 @@ namespace AlgorytmEwolucyjny
                 }
                 secondParent = actualPopulation.subjects.ToArray()[index + 1];
 
-                if (method == "default")
-                    child = ReproduceDefault(firstParent, secondParent);
+                switch (method)
+                {
+                    case 0:
+                        child = ReproduceDefault(firstParent, secondParent);
+                        break;
+                    case 1:
+                        child = ReproduceMean(firstParent, secondParent);
+                        break;
+                    case 2:
+                        break;
+                    default:
+                        child = ReproduceDefault(firstParent, secondParent);
+                        break;
+                }
                 nextPopulation.subjects.Add(child);
             }
             iterations++;
@@ -95,11 +103,60 @@ namespace AlgorytmEwolucyjny
                 child.nGenes = first.nGenes;
                 for (int i = 0; i < first.nGenes; i++)
                 {
-                    child.values.Add(0.6 * first.values.ToArray()[i] + 0.4 * second.values.ToArray()[i] + 0.01 * ((tmp.NextDouble() * 20) - 10));
+                    double y = 0.6 * first.values.ToArray()[i] + 0.4 * second.values.ToArray()[i] + 0.01 * ((tmp.NextDouble() * 20) - 10);
+                    child.values.Add(y);
                 }
                 child.stringValues.Clear();
                 child.valuesToString();
                 return child;
+            }
+        }
+
+        private Subject ReproduceMean(Subject first, Subject second)
+        {
+            if(iterations%2 == 0)
+            {
+                Subject child = new Subject();
+                if ((tmp.NextDouble() * actualPopulation.populationSize) < 0.2)
+                {
+                    child.initSubject(first.nGenes);
+                    return child;
+                }
+                else
+                {
+                    child.nGenes = first.nGenes;
+                    for (int i = 0; i < first.nGenes; i++)
+                    {
+                        double y = first.values.ToArray()[i] + tmp.NextDouble() * (second.values.ToArray()[i] - first.values.ToArray()[i]) + 0.01 * ((tmp.NextDouble() * 20) - 10);
+                        child.values.Add(y);
+                    }
+                    child.stringValues.Clear();
+                    child.valuesToString();
+                    return child;
+                }
+            }
+            else
+            {
+                Subject child = new Subject();
+                if ((tmp.NextDouble() * actualPopulation.populationSize) < 0.2)
+                {
+                    child.initSubject(first.nGenes);
+                    return child;
+                }
+                else
+                {
+                    child.nGenes = first.nGenes;
+                    for (int i = 0; i < first.nGenes; i++)
+                    {
+                        double y = first.values.ToArray()[i] + tmp.NextDouble() * (second.values.ToArray()[i] - first.values.ToArray()[i]) + 0.01 * ((tmp.NextDouble() * 20) - 10);
+                        double z = second.values.ToArray()[i] + first.values.ToArray()[i] - y;
+                        child.values.Add(z);
+                    }
+                    child.stringValues.Clear();
+                    child.valuesToString();
+                    return child;
+                }
+
             }
         }
     }
