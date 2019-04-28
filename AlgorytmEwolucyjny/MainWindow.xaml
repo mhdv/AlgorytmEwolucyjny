@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AlgorytmEwolucyjny"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="800">
+        Title="Teoria i metody optymalizacji - algorytm ewolucyjny" Icon="icon.ico" Height="600" Width="800">
 	<Viewbox Stretch="Fill">
 		<Grid>
-			<TextBox x:Name="txtEquation" HorizontalAlignment="Left" Height="22" Margin="10,35,0,0" TextWrapping="Wrap" Text="x1^4+x2^4-0.62*x1^2-0.62*x2^2" VerticalAlignment="Top" Width="772"/>
+			<TextBox x:Name="txtEquation" HorizontalAlignment="Left" Height="22" Margin="10,35,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="772"/>
 			<Button x:Name="btnEquation" Content="Zatwierdź" HorizontalAlignment="Left" Margin="707,539,0,0" VerticalAlignment="Top" Width="75" Click="btnEquation_Click"/>
 			<TextBox x:Name="tmpSolution" HorizontalAlignment="Left" Margin="10,68,0,0" TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Auto" Text="Rozwiązanie: " VerticalAlignment="Top" Height="491" Width="423"/>
 			<TextBox x:Name="txtPopulationSize" HorizontalAlignment="Left" Height="23" Margin="607,68,0,0" TextWrapping="Wrap" Text="20" MaxLength="3" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Width="120" PreviewTextInput="PreviewTextInput" RenderTransformOrigin="0.567,3.217"/>
@@ -23,6 +23,7 @@
 			<ComboBox x:Name="comboFunctions" SelectedIndex="0" HorizontalAlignment="Left" Margin="541,8,0,0" VerticalAlignment="Top" Width="241" SelectionChanged="ComboFunctions_SelectionChanged"/>
 			<Grid Background="Black" Height="24" Width="1" VerticalAlignment="Center" Margin="357,6,434,539"/>
 			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Przykładowe funkcje:" HorizontalAlignment="Left" Margin="414,6,0,0" VerticalAlignment="Top"/>
+			<Label Content="Autorzy: Michał Filipowicz &amp; Rafał Madeja" HorizontalAlignment="Left" Margin="451,533,0,0" VerticalAlignment="Top"/>
 
 		</Grid>
 	</Viewbox>
