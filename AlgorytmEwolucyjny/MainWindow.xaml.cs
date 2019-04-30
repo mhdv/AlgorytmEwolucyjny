@@ -290,6 +290,7 @@ namespace AlgorytmEwolucyjny
 
         void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            pbProgress.Value = 100;
             txtProgress.Text = "100%";
             var sol = (Subject)e.Result;
             allSolutions = allSolutions.OrderBy(o => o.solution).ToList();

@@ -10,7 +10,7 @@
 		<Grid>
 			<TextBox x:Name="txtEquation" HorizontalAlignment="Left" Height="22" Margin="10,35,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="772" TextChanged="TxtEquation_TextChanged"/>
 			<Button x:Name="btnEquation" Content="Zatwierdź" HorizontalAlignment="Left" Margin="707,539,0,0" VerticalAlignment="Top" Width="75" Click="btnEquation_Click"/>
-			<TextBox x:Name="tmpSolution" HorizontalAlignment="Left" Margin="10,68,0,0" TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Auto" Text="Rozwiązanie: " VerticalAlignment="Top" Height="491" Width="423"/>
+			<TextBox x:Name="tmpSolution" HorizontalAlignment="Left" Margin="10,68,0,0" TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Auto" Text="Rozwiązanie: " VerticalAlignment="Top" Height="133" Width="423"/>
 			<TextBox x:Name="txtPopulationSize" HorizontalAlignment="Left" Height="23" Margin="618,356,0,0" TextWrapping="Wrap" Text="20" MaxLength="3" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Width="120" PreviewTextInput="PreviewTextInput" RenderTransformOrigin="0.567,3.217"/>
 			<TextBox x:Name="txtIterations" HorizontalAlignment="Left" Height="23" Margin="618,384,0,0" TextWrapping="Wrap" Text="50" MaxLength="4" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Width="120" PreviewTextInput="PreviewTextInput" RenderTransformOrigin="0.567,3.217"/>
 			<Grid Background="Black" Height="491" Width="1" VerticalAlignment="Center" Margin="445,68,346,10"/>
@@ -25,8 +25,10 @@
 			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Przykładowe funkcje:" HorizontalAlignment="Left" Margin="414,6,0,0" VerticalAlignment="Top"/>
 			<Label Content="Autorzy: Michał Filipowicz &amp; Rafał Madeja" HorizontalAlignment="Left" Margin="451,533,0,0" VerticalAlignment="Top"/>
 			<DataGrid x:Name="variablesGrid" AutoGenerateColumns="True" HorizontalAlignment="Left" Height="248" Margin="462,94,0,0" VerticalAlignment="Top" Width="310"/>
-			<ProgressBar x:Name="pbProgress" HorizontalAlignment="Left" Height="19" Margin="462,515,0,0" VerticalAlignment="Top" Width="320"/>
-			<TextBlock x:Name="txtProgress" HorizontalAlignment="Center" Margin="618,515,138,0" TextWrapping="Wrap" Text="0%" VerticalAlignment="Top" Width="36"/>
+			<ProgressBar x:Name="pbProgress" HorizontalAlignment="Left" Height="33" Margin="462,501,0,0" VerticalAlignment="Top" Width="320"/>
+			<TextBlock x:Name="txtProgress" HorizontalAlignment="Center" Margin="618,509,138,0" TextWrapping="Wrap" Text="0%" VerticalAlignment="Top" Width="36"/>
+			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Argumenty i przedziały punktów startowych:" HorizontalAlignment="Left" Margin="462,70,0,0" VerticalAlignment="Top"/>
+			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Postęp:" HorizontalAlignment="Left" Margin="462,477,0,0" VerticalAlignment="Top"/>
 
 		</Grid>
 	</Viewbox>
