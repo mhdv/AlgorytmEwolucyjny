@@ -8,22 +8,25 @@
         Title="Teoria i metody optymalizacji - algorytm ewolucyjny" Icon="icon.ico" Height="600" Width="800">
 	<Viewbox Stretch="Fill">
 		<Grid>
-			<TextBox x:Name="txtEquation" HorizontalAlignment="Left" Height="22" Margin="10,35,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="772"/>
+			<TextBox x:Name="txtEquation" HorizontalAlignment="Left" Height="22" Margin="10,35,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="772" TextChanged="TxtEquation_TextChanged"/>
 			<Button x:Name="btnEquation" Content="Zatwierdź" HorizontalAlignment="Left" Margin="707,539,0,0" VerticalAlignment="Top" Width="75" Click="btnEquation_Click"/>
 			<TextBox x:Name="tmpSolution" HorizontalAlignment="Left" Margin="10,68,0,0" TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Auto" Text="Rozwiązanie: " VerticalAlignment="Top" Height="491" Width="423"/>
-			<TextBox x:Name="txtPopulationSize" HorizontalAlignment="Left" Height="23" Margin="607,68,0,0" TextWrapping="Wrap" Text="20" MaxLength="3" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Width="120" PreviewTextInput="PreviewTextInput" RenderTransformOrigin="0.567,3.217"/>
-			<TextBox x:Name="txtIterations" HorizontalAlignment="Left" Height="23" Margin="607,96,0,0" TextWrapping="Wrap" Text="50" MaxLength="4" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Width="120" PreviewTextInput="PreviewTextInput" RenderTransformOrigin="0.567,3.217"/>
+			<TextBox x:Name="txtPopulationSize" HorizontalAlignment="Left" Height="23" Margin="618,356,0,0" TextWrapping="Wrap" Text="20" MaxLength="3" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Width="120" PreviewTextInput="PreviewTextInput" RenderTransformOrigin="0.567,3.217"/>
+			<TextBox x:Name="txtIterations" HorizontalAlignment="Left" Height="23" Margin="618,384,0,0" TextWrapping="Wrap" Text="50" MaxLength="4" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Width="120" PreviewTextInput="PreviewTextInput" RenderTransformOrigin="0.567,3.217"/>
 			<Grid Background="Black" Height="491" Width="1" VerticalAlignment="Center" Margin="445,68,346,10"/>
-			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Wielkość populacji:" HorizontalAlignment="Left" Margin="451,68,0,0" VerticalAlignment="Top"/>
-			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Operator krzyżowania:" HorizontalAlignment="Left" Margin="451,126,0,0" VerticalAlignment="Top"/>
-			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Liczba iteracji:" HorizontalAlignment="Left" Margin="451,97,0,0" VerticalAlignment="Top"/>
+			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Wielkość populacji:" HorizontalAlignment="Left" Margin="462,356,0,0" VerticalAlignment="Top"/>
+			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Operator krzyżowania:" HorizontalAlignment="Left" Margin="462,414,0,0" VerticalAlignment="Top"/>
+			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Liczba iteracji:" HorizontalAlignment="Left" Margin="462,385,0,0" VerticalAlignment="Top"/>
 			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Wprowadź równanie (składnia MATLAB &quot;2*x1^2+sqrt(x2)&quot;...):" HorizontalAlignment="Left" Margin="10,6,0,0" VerticalAlignment="Top" Width="358"/>
 			<Grid Background="Black" Height="1" VerticalAlignment="Center" Margin="10,62,10,506"/>
-			<ComboBox x:Name="comboReproductionMethod" SelectedIndex="0" HorizontalAlignment="Left" Margin="607,124,0,0" VerticalAlignment="Top" Width="120"/>
+			<ComboBox x:Name="comboReproductionMethod" SelectedIndex="0" HorizontalAlignment="Left" Margin="618,412,0,0" VerticalAlignment="Top" Width="120"/>
 			<ComboBox x:Name="comboFunctions" SelectedIndex="0" HorizontalAlignment="Left" Margin="541,8,0,0" VerticalAlignment="Top" Width="241" SelectionChanged="ComboFunctions_SelectionChanged"/>
 			<Grid Background="Black" Height="24" Width="1" VerticalAlignment="Center" Margin="357,6,434,539"/>
 			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Przykładowe funkcje:" HorizontalAlignment="Left" Margin="414,6,0,0" VerticalAlignment="Top"/>
 			<Label Content="Autorzy: Michał Filipowicz &amp; Rafał Madeja" HorizontalAlignment="Left" Margin="451,533,0,0" VerticalAlignment="Top"/>
+			<DataGrid x:Name="variablesGrid" AutoGenerateColumns="True" HorizontalAlignment="Left" Height="248" Margin="462,94,0,0" VerticalAlignment="Top" Width="310"/>
+			<ProgressBar x:Name="pbProgress" HorizontalAlignment="Left" Height="19" Margin="462,515,0,0" VerticalAlignment="Top" Width="320"/>
+			<TextBlock x:Name="txtProgress" HorizontalAlignment="Center" Margin="618,515,138,0" TextWrapping="Wrap" Text="0%" VerticalAlignment="Top" Width="36"/>
 
 		</Grid>
 	</Viewbox>

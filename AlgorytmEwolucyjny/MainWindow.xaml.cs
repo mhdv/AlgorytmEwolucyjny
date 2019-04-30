@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using org.mariuszgromada.math.mxparser;
 using org.mariuszgromada.math.mxparser.parsertokens;
@@ -51,11 +56,50 @@ namespace AlgorytmEwolucyjny
         public string equationString;
         public org.mariuszgromada.math.mxparser.Expression eq;
         public List<string> argumentsString = new List<string>();
+        ObservableCollection<Arguments> arguments = new ObservableCollection<Arguments>();
+        Function f;
+        Algorithm algorithm = new Algorithm();
+        string commaSeparatedArguments;
+        Population population = new Population();
+        List<Subject> allSolutions = new List<Subject>();
 
         public MainWindow()
         {
             InitializeComponent();
             InitializeOtherComponents();
+            variablesGrid.CellEditEnding += myDG_CellEditEnding;
+        }
+
+        private void myDG_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            if (e.EditAction == DataGridEditAction.Commit)
+            {
+                var column = e.Column as DataGridBoundColumn;
+                if (column != null)
+                {
+                    var bindingPath = (column.Binding as Binding).Path.Path;
+                    if (bindingPath == "Minimum")
+                    {
+                        int rowIndex = e.Row.GetIndex();
+                        var el = e.EditingElement as TextBox;
+                        Regex regex = new Regex(@"-?\d+(?:\.\d+)?");
+                        if(regex.Match(el.Text).Success)
+                            arguments[rowIndex].Minimum = double.Parse(el.Text, CultureInfo.InvariantCulture);
+                        else
+                            MessageBox.Show("Wpisuj tylko liczby rzeczywiste (kropka zamiast przecinka)!", "Błąd!", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    if (bindingPath == "Maximum")
+                    {
+                        int rowIndex = e.Row.GetIndex();
+                        var el = e.EditingElement as TextBox;
+                        Regex regex = new Regex(@"-?\d+(?:\.\d+)?");
+                        if (regex.Match(el.Text).Success)
+                            arguments[rowIndex].Maximum = double.Parse(el.Text, CultureInfo.InvariantCulture);
+                        else
+                            MessageBox.Show("Wpisuj tylko liczby rzeczywiste (kropka zamiast przecinka)!", "Błąd!", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                }
+            }
         }
 
         private void InitializeOtherComponents()
@@ -79,13 +123,15 @@ namespace AlgorytmEwolucyjny
         //
         private void btnEquation_Click(object sender, RoutedEventArgs e)
         {
-            if(System.Int32.Parse(txtPopulationSize.Text) <= 5)
+            if (System.Int32.Parse(txtPopulationSize.Text) <= 5)
             {
-                MessageBox.Show("Populacja powinna być większa niż 5!");
+                MessageBox.Show("Populacja powinna być większa niż 5!", "Błąd!", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            // Definiowanie algorytmu
-            Algorithm algorithm = new Algorithm();
+            // Definicje
+            algorithm = new Algorithm();
+            commaSeparatedArguments = "";
+            population = new Population();
 
             // Równanie w postaci łańcucha znaków
             equationString = txtEquation.Text;
@@ -104,8 +150,6 @@ namespace AlgorytmEwolucyjny
                         argumentsString.Add(t.tokenStr);
                 }
             }
-
-
             //
             // Łapanie błędów
             //
@@ -131,7 +175,7 @@ namespace AlgorytmEwolucyjny
                 algorithm.ClearAlgorithm();
                 return;
             }
-            foreach(var arg in argumentsString)
+            foreach (var arg in argumentsString)
                 if (arg.Length < 2 || !arg.Contains("x"))
                 {
                     tmpSolution.Text = "Wprowadzaj tylko argumenty postaci x1,x2,x3...";
@@ -145,57 +189,22 @@ namespace AlgorytmEwolucyjny
                 }
 
             // Oddzielanie argumentów przecinkami oraz utworzenie funkcji
-            string commaSeparatedArguments = string.Join(", ", argumentsString);
-            Function f = new Function("f(" + commaSeparatedArguments + ") = " + equationString);
+            commaSeparatedArguments = string.Join(", ", argumentsString);
+            f = new Function("f(" + commaSeparatedArguments + ") = " + equationString);
 
             // Tworzenie populacji i jej inicjalizacja / inicjalizacja algorytmu
-            Population population = new Population();
             algorithm.AlgorithmInit(comboReproductionMethod.SelectedIndex, System.Int32.Parse(txtIterations.Text));
-            population.initPopulation(argumentsString.ToArray().Length, System.Convert.ToInt32(txtPopulationSize.Text));
+            population.initPopulation(arguments, System.Convert.ToInt32(txtPopulationSize.Text));
+            pbProgress.Value = 0;
 
-            for (int k = 0; k < System.Int32.Parse(txtIterations.Text); k++)
-            {
-                // Sortowanie według najlepszych rozwiązań
-                population.subjects = population.subjects.OrderBy(o => o.solution).ToList();
+            btnEquation.IsEnabled = false;
 
-                // Uruchomienie algorytmu
-                population = algorithm.RunAlgorithm(population);
-
-                // Tworzenie wyrażeń oraz obliczanie rozwiązań aktualnej populacji
-                foreach(var sub in population.subjects)
-                {
-                    org.mariuszgromada.math.mxparser.Expression equa = new org.mariuszgromada.math.mxparser.Expression("f(" + string.Join(", ", sub.stringValues) + ")", f);
-                    sub.solution = equa.calculate();
-                }
-            }
-            population.subjects = population.subjects.OrderBy(o => o.solution).ToList();
-            List<Subject> solutions = new List<Subject>();
-            solutions.Add(population.subjects[0]);
-            solutions.AddRange(CheckOtherSolutions(population.subjects[0]));
-
-            // tymczasowe rozwiązanie równania
-            tmpSolution.Text = "Znalezione rozwiązania przy populacji wielkości " + txtPopulationSize.Text + ":\n";
-            
-            foreach(var sol in solutions)
-            {
-                tmpSolution.Text += "#######################################\n";
-                tmpSolution.Text += "(" + commaSeparatedArguments + ") = " + "(" + string.Join(", ", sol.stringValues) + ")" + "\n";
-                tmpSolution.Text += "Rozwiązanie:   " + sol.solution.ToString("0.00000000", System.Globalization.CultureInfo.InvariantCulture) + "\n";
-                tmpSolution.Text += "#######################################\n";
-            }
-
-
-            // Czyszczenie przed kolejnym wywołaniem
-            argumentsString.Clear();
-            argumentsString = new List<string>();
-            equationString = "";
-            eq = new org.mariuszgromada.math.mxparser.Expression();
-            System.GC.Collect(); // <- Garbage Collector
-            algorithm.ClearAlgorithm();
-            population.subjects.Clear();
-
-            // MessageBox
-            MessageBox.Show("Obliczono rozwiązania");
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.WorkerReportsProgress = true;
+            worker.DoWork += worker_DoWork;
+            worker.ProgressChanged += worker_ProgressChanged;
+            worker.RunWorkerCompleted += worker_RunWorkerCompleted;
+            worker.RunWorkerAsync(10000);
         }
 
         //
@@ -213,24 +222,102 @@ namespace AlgorytmEwolucyjny
                 txtEquation.Text = comboFunctions.SelectedItem.ToString();
         }
 
-        private List<Subject> CheckOtherSolutions(Subject best)
+        private void TxtEquation_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-            List<Subject> listOfAlternatives = new List<Subject>();
-            string commaSeparatedArguments = string.Join(", ", argumentsString);
-            Function f = new Function("f(" + commaSeparatedArguments + ") = " + equationString);
-            Subject potentialAlternative = new Subject();
-            potentialAlternative.values = best.values.Select(i => -1 * i).ToList();
-            potentialAlternative.valuesToString();
-            org.mariuszgromada.math.mxparser.Expression equa = new org.mariuszgromada.math.mxparser.Expression("f(" + string.Join(", ", potentialAlternative.stringValues) + ")", f);
-            potentialAlternative.solution = equa.calculate();
-            
-            if(potentialAlternative.solution == best.solution)
+            arguments = new ObservableCollection<Arguments>();
+            equationString = txtEquation.Text;
+            // Tymczasowe równanie - później jest nadpisywane
+            eq = new org.mariuszgromada.math.mxparser.Expression(equationString);
+            // Odczytywanie argumentów wpisanego równania
+            List<Token> tokensList = eq.getCopyOfInitialTokens();
+            tmpSolution.Text = "";
+            foreach (Token t in tokensList)
             {
-                listOfAlternatives.Add(potentialAlternative);
-                return listOfAlternatives;
+                if (t.tokenTypeId == Token.NOT_MATCHED)
+                {
+                    if (!argumentsString.Contains(t.tokenStr))
+                    {
+                        argumentsString.Add(t.tokenStr);
+                        arguments.Add(new Arguments { Argument = t.tokenStr, Minimum = -5, Maximum = 5});
+                    }
+                }
             }
-
-            return new List<Subject>();
+            variablesGrid.AutoGenerateColumns = true;
+            variablesGrid.ItemsSource = null;
+            variablesGrid.ItemsSource = arguments;
+            variablesGrid.Items.Refresh();
+            argumentsString.Clear();
+            tokensList.Clear();
+            
         }
+        
+        void worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            for (int k = 0; k < algorithm.iterations; k++)
+            {
+                int progressPercentage = Convert.ToInt32(((double)k / algorithm.iterations) * 100);
+                // Sortowanie według najlepszych rozwiązań
+                population.subjects = population.subjects.OrderBy(o => o.solution).ToList();
+
+                // Uruchomienie algorytmu
+                population = algorithm.RunAlgorithm(population);
+                org.mariuszgromada.math.mxparser.Expression equa = new org.mariuszgromada.math.mxparser.Expression();
+                // Tworzenie wyrażeń oraz obliczanie rozwiązań aktualnej populacji
+                foreach (var sub in population.subjects)
+                {
+                    equa = new org.mariuszgromada.math.mxparser.Expression("f(" + string.Join(", ", sub.stringValues) + ")", f);
+                    sub.solution = equa.calculate();
+                }
+                (sender as BackgroundWorker).ReportProgress(progressPercentage, population.subjects[0]);
+            }
+            e.Result = population.subjects[0];
+        }
+
+        void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            pbProgress.Value = e.ProgressPercentage;
+            txtProgress.Text = e.ProgressPercentage.ToString() + "%";
+            if (e.UserState != null)
+            {
+                var sol = (Subject)e.UserState;
+                tmpSolution.Text = "#######################################\n";
+                tmpSolution.Text += "ROZWIĄZANIE NIE JEST OSTATECZNE. ZACZEKAJ NA KONIEC PROCESU.\n";
+                tmpSolution.Text += "Aktualne rozwiązanie:   " + sol.solution + "\n";
+                tmpSolution.Text += "#######################################\n";
+                allSolutions.Add(sol);
+            }
+        }
+
+        void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            txtProgress.Text = "100%";
+            var sol = (Subject)e.Result;
+            allSolutions = allSolutions.OrderBy(o => o.solution).ToList();
+            // tymczasowe rozwiązanie równania
+            tmpSolution.Text = "Znalezione rozwiązania przy populacji wielkości " + txtPopulationSize.Text + ":\n";
+            
+                tmpSolution.Text += "#######################################\n";
+                tmpSolution.Text += "(" + commaSeparatedArguments + ") = " + "(" + string.Join(", ", allSolutions[0].stringValues) + ")" + "\n";
+                tmpSolution.Text += "Rozwiązanie:   " + allSolutions[0].solution + "\n";
+                tmpSolution.Text += "#######################################\n";
+            
+
+
+            // Czyszczenie przed kolejnym wywołaniem
+            argumentsString.Clear();
+            argumentsString = new List<string>();
+            equationString = "";
+            eq = new org.mariuszgromada.math.mxparser.Expression();
+            System.GC.Collect(); // <- Garbage Collector
+            algorithm.ClearAlgorithm();
+            population.subjects.Clear();
+            allSolutions.Clear();
+
+            btnEquation.IsEnabled = true;
+            // MessageBox
+            MessageBox.Show("Obliczono rozwiązania", "Ukończono", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+
     }
 }

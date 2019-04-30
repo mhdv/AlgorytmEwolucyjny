@@ -85,7 +85,6 @@ namespace AlgorytmEwolucyjny
                 }
                 nextPopulation.subjects.Add(child);
             }
-            iterations++;
             actualPopulation = new Population();
             return nextPopulation;
         }
@@ -95,7 +94,7 @@ namespace AlgorytmEwolucyjny
             Subject child = new Subject();
             if ((tmp.NextDouble() * actualPopulation.populationSize) < 0.2)
             {
-                child.initSubject(first.nGenes);
+                child.initSubject(first.arguments);
                 return child;
             }
             else
@@ -119,7 +118,7 @@ namespace AlgorytmEwolucyjny
                 Subject child = new Subject();
                 if ((tmp.NextDouble() * actualPopulation.populationSize) < 0.2)
                 {
-                    child.initSubject(first.nGenes);
+                    child.initSubject(first.arguments);
                     return child;
                 }
                 else
@@ -140,7 +139,7 @@ namespace AlgorytmEwolucyjny
                 Subject child = new Subject();
                 if ((tmp.NextDouble() * actualPopulation.populationSize) < 0.2)
                 {
-                    child.initSubject(first.nGenes);
+                    child.initSubject(first.arguments);
                     return child;
                 }
                 else
@@ -165,7 +164,7 @@ namespace AlgorytmEwolucyjny
             Subject child = new Subject();
             if ((tmp.NextDouble() * actualPopulation.populationSize) < 0.2)
             {
-                child.initSubject(first.nGenes);
+                child.initSubject(first.arguments);
                 return child;
             }
             else

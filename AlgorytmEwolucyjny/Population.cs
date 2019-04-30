@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,14 +15,14 @@ namespace AlgorytmEwolucyjny
         //
         // Inicjalizacja populacji
         //
-        public void initPopulation(int nValues, int popSize)
+        public void initPopulation(ObservableCollection<Arguments> args, int popSize)
         {
             // na sztywno wielkość populacji - do wyboru w programie potem
             populationSize = popSize;
             for (int i = 0; i < populationSize; i++)
             {
                 Subject newSubject = new Subject();
-                newSubject.initSubject(nValues);
+                newSubject.initSubject(args);
                 subjects.Add(newSubject);
             }
         }
