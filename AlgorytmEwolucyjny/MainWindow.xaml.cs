@@ -71,6 +71,7 @@ namespace AlgorytmEwolucyjny
             // Initialize comboReproductionMethod
             comboReproductionMethod.Items.Add("Domyślna");
             comboReproductionMethod.Items.Add("Krzyżowanie uśredniające");
+            comboReproductionMethod.Items.Add("Krzyżowanie dwupunktowe");
         }
 
         //
@@ -192,6 +193,9 @@ namespace AlgorytmEwolucyjny
             System.GC.Collect(); // <- Garbage Collector
             algorithm.ClearAlgorithm();
             population.subjects.Clear();
+
+            // MessageBox
+            MessageBox.Show("Obliczono rozwiązania");
         }
 
         //

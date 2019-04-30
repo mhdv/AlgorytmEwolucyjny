@@ -38,8 +38,7 @@ namespace AlgorytmEwolucyjny
                 Subject child = new Subject();
                 Subject firstParent = new Subject();
                 Subject secondParent = new Subject();
-                double firstChance = tmp.NextDouble() * actualPopulation.populationSize;
-                double secondChance = tmp.NextDouble() * actualPopulation.populationSize;
+                double firstChance = tmp.NextDouble();
                 int index = 0;
 
                 if(firstChance <= 0.4 * actualPopulation.populationSize)
@@ -78,6 +77,7 @@ namespace AlgorytmEwolucyjny
                         child = ReproduceMean(firstParent, secondParent);
                         break;
                     case 2:
+                        child = ReproduceTwopoint(firstParent, secondParent);
                         break;
                     default:
                         child = ReproduceDefault(firstParent, secondParent);
@@ -159,5 +159,44 @@ namespace AlgorytmEwolucyjny
 
             }
         }
+
+        private Subject ReproduceTwopoint(Subject first, Subject second)
+        {
+            Subject child = new Subject();
+            if ((tmp.NextDouble() * actualPopulation.populationSize) < 0.2)
+            {
+                child.initSubject(first.nGenes);
+                return child;
+            }
+            else
+            {
+                if(tmp.NextDouble() < 0.5)
+                {
+                    child.nGenes = first.nGenes;
+                    for (int i = 0; i < first.nGenes; i++)
+                    {
+                        double y = first.values.ToArray()[i] + 0.01 * ((tmp.NextDouble() * 20) - 10);
+                        child.values.Add(y);
+                    }
+                    child.stringValues.Clear();
+                    child.valuesToString();
+                    return child;
+                }
+                else
+                {
+                    child.nGenes = first.nGenes;
+                    for (int i = 0; i < first.nGenes; i++)
+                    {
+                        double y = second.values.ToArray()[i] + 0.01 * ((tmp.NextDouble() * 20) - 10);
+                        child.values.Add(y);
+                    }
+                    child.stringValues.Clear();
+                    child.valuesToString();
+                    return child;
+                }
+                
+            }
+        }
+
     }
 }
