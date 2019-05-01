@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -66,6 +67,8 @@ namespace AlgorytmEwolucyjny
         Population population = new Population();
         List<Subject> allSolutions = new List<Subject>();
         int p = 400;
+        PlotModel model = new PlotModel();
+        bool plotBusy = false;
 
         public string Title { get; private set; }
 
@@ -78,10 +81,58 @@ namespace AlgorytmEwolucyjny
             variablesGrid.CellEditEnding += myDG_CellEditEnding;
         }
 
-        private PlotModel plot(org.mariuszgromada.math.mxparser.Expression equa)
+        private void plotChart()
         {
-            var model = new PlotModel();
+            if (!plotBusy)
+            {
+                model = new PlotModel();
+                BackgroundWorker worker2 = new BackgroundWorker();
+                worker2.WorkerReportsProgress = true;
+                worker2.DoWork += worker_DoWork2;
+                worker2.ProgressChanged += worker_ProgressChanged2;
+                worker2.RunWorkerCompleted += worker_RunWorkerCompleted2;
+                worker2.RunWorkerAsync();
+            }
+            else              
+                return;
+        }
 
+        void worker_RunWorkerCompleted2(object sender, RunWorkerCompletedEventArgs e)
+        {
+            pltModel.Model = (PlotModel)e.Result;
+            plotBusy = false;
+        }
+        void worker_ProgressChanged2(object sender, ProgressChangedEventArgs e)
+        {
+        }
+        
+        void plotPoint(Subject point)
+        {
+            if (!plotBusy)
+            {
+                if(arguments.ToArray().Length > 1)
+                {
+                    var scatterSeries = new ScatterSeries { MarkerType = MarkerType.Circle };
+                    scatterSeries.Points.Add(new ScatterPoint(point.values[0], point.values[1], 3, 254));
+                    model.Series.Add(scatterSeries);
+                    pltModel.InvalidatePlot(true);
+                }
+                else
+                {
+                    var scatterSeries = new ScatterSeries { MarkerType = MarkerType.Circle };
+                    scatterSeries.Points.Add(new ScatterPoint(point.values[0], point.solution, 3, 254));
+                    model.Series.Add(scatterSeries);
+                    pltModel.InvalidatePlot(true);
+                }
+            }
+
+        }
+
+        void worker_DoWork2(object sender, DoWorkEventArgs e)
+        {
+            plotBusy = true;
+            // Tymczasowe równanie - później jest nadpisywane
+            eq = new org.mariuszgromada.math.mxparser.Expression(equationString);
             List<Token> tokensList = eq.getCopyOfInitialTokens();
             foreach (Token t in tokensList)
             {
@@ -95,8 +146,50 @@ namespace AlgorytmEwolucyjny
             }
             commaSeparatedArguments = string.Join(", ", argumentsString);
             f = new Function("f(" + commaSeparatedArguments + ") = " + equationString);
+            if (argumentsString.ToArray().Length < 1)
+            {
+                argumentsString.Clear();
+                argumentsString = new List<string>();
+                equationString = "";
+                eq = new org.mariuszgromada.math.mxparser.Expression();
+                System.GC.Collect(); // <- Garbage Collector
+                algorithm.ClearAlgorithm();
+                return;
+            }
+            if (!eq.checkLexSyntax())
+            {
+                argumentsString.Clear();
+                argumentsString = new List<string>();
+                equationString = "";
+                eq = new org.mariuszgromada.math.mxparser.Expression();
+                System.GC.Collect(); // <- Garbage Collector
+                algorithm.ClearAlgorithm();
+                return;
+            }
+            if (eq.checkSyntax())
+            {
+                argumentsString.Clear();
+                argumentsString = new List<string>();
+                equationString = "";
+                eq = new org.mariuszgromada.math.mxparser.Expression();
+                System.GC.Collect(); // <- Garbage Collector
+                algorithm.ClearAlgorithm();
+                return;
+            }
+            foreach (var arg in argumentsString)
+                if (arg.Length < 2 || !arg.Contains("x"))
+                {
+                    argumentsString.Clear();
+                    argumentsString = new List<string>();
+                    equationString = "";
+                    eq = new org.mariuszgromada.math.mxparser.Expression();
+                    System.GC.Collect(); // <- Garbage Collector
+                    algorithm.ClearAlgorithm();
+                    return;
+                }
+            
 
-            if (argumentsString.ToArray().Length > 1)
+            if (arguments.ToArray().Length > 1)
             {
                 model.Title = "Warstwice: ";
                 List<double[]> xy = new List<double[]>();
@@ -127,14 +220,14 @@ namespace AlgorytmEwolucyjny
                 {
                     for (int j = 0; j < p; ++j)
                     {
-                        equa = new org.mariuszgromada.math.mxparser.Expression("f(" + infunc[i, j] + ")", f);
+                        org.mariuszgromada.math.mxparser.Expression equa = new org.mariuszgromada.math.mxparser.Expression("f(" + infunc[i, j] + ")", f);
                         data[i, j] = equa.calculate();
                     }
                 }
 
                 var cs = new ContourSeries
                 {
-                    Color = OxyColors.Black,
+                    Color = OxyColors.Red,
                     LabelBackground = OxyColors.White,
                     ColumnCoordinates = xy[0],
                     RowCoordinates = xy[1],
@@ -160,7 +253,7 @@ namespace AlgorytmEwolucyjny
                 var data = new double[p];
                 for (int i = 0; i < p; ++i)
                 {
-                    equa = new org.mariuszgromada.math.mxparser.Expression("f(" + infunc[i] + ")", f);
+                    org.mariuszgromada.math.mxparser.Expression equa = new org.mariuszgromada.math.mxparser.Expression("f(" + infunc[i] + ")", f);
                     data[i] = equa.calculate();
                 }
                 List<DataPoint> pnts = new List<DataPoint>();
@@ -169,17 +262,28 @@ namespace AlgorytmEwolucyjny
                     series1.Points.Add(new DataPoint(xy[0][i], data[i]));
                     //pnts.Add(new DataPoint(xy[0][i], data[i]));
                 }
+                series1.Color = OxyColors.Red;
                 model.Series.Add(series1);
                 p = p / 10;
             }
 
             argumentsString.Clear();
+            eq = new org.mariuszgromada.math.mxparser.Expression();
+            e.Result = model;
 
-            //var scatterSeries = new ScatterSeries { MarkerType = MarkerType.Circle };
-            //scatterSeries.Points.Add(new ScatterPoint(0.56, 0.56, 5, 254));
-            //model.Series.Add(scatterSeries);
-            return model;
         }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            Environment.Exit(Environment.ExitCode);
+        }
+
+        //private PlotModel plot(org.mariuszgromada.math.mxparser.Expression equa)
+        //{
+        //    var model = new PlotModel();
+
+
+        //}
 
         private void myDG_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
@@ -210,7 +314,6 @@ namespace AlgorytmEwolucyjny
                             MessageBox.Show("Wpisuj tylko liczby rzeczywiste (kropka zamiast przecinka)!", "Błąd!", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
-                pltModel.Model = plot(eq);
             }
         }
 
@@ -235,6 +338,7 @@ namespace AlgorytmEwolucyjny
         //
         private void btnEquation_Click(object sender, RoutedEventArgs e)
         {
+            allSolutions.Clear();
             if (System.Int32.Parse(txtPopulationSize.Text) <= 5)
             {
                 MessageBox.Show("Populacja powinna być większa niż 5!", "Błąd!", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -310,6 +414,8 @@ namespace AlgorytmEwolucyjny
             pbProgress.Value = 0;
 
             btnEquation.IsEnabled = false;
+            plotRefresh.IsEnabled = false;
+            plotOnlyBest.IsEnabled = false;
 
             BackgroundWorker worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
@@ -332,6 +438,7 @@ namespace AlgorytmEwolucyjny
         {
             if (comboFunctions.SelectedIndex != 0)
                 txtEquation.Text = comboFunctions.SelectedItem.ToString();
+            equationString = comboFunctions.SelectedItem.ToString();
         }
 
         private void TxtEquation_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
@@ -343,6 +450,7 @@ namespace AlgorytmEwolucyjny
             // Odczytywanie argumentów wpisanego równania
             List<Token> tokensList = eq.getCopyOfInitialTokens();
             tmpSolution.Text = "";
+            arguments.Clear();
             foreach (Token t in tokensList)
             {
                 if (t.tokenTypeId == Token.NOT_MATCHED)
@@ -354,7 +462,6 @@ namespace AlgorytmEwolucyjny
                     }
                 }
             }
-            pltModel.Model = plot(eq);
             variablesGrid.AutoGenerateColumns = true;
             variablesGrid.ItemsSource = null;
             variablesGrid.ItemsSource = arguments;
@@ -398,6 +505,7 @@ namespace AlgorytmEwolucyjny
                 tmpSolution.Text += "Aktualne rozwiązanie:   " + sol.solution + "\n";
                 tmpSolution.Text += "#######################################\n";
                 allSolutions.Add(sol);
+                plotPoint(sol);
             }
         }
 
@@ -407,6 +515,7 @@ namespace AlgorytmEwolucyjny
             txtProgress.Text = "100%";
             var sol = (Subject)e.Result;
             allSolutions = allSolutions.OrderBy(o => o.solution).ToList();
+            plotPoint(allSolutions[0]);
             // tymczasowe rozwiązanie równania
             tmpSolution.Text = "Znalezione rozwiązania przy populacji wielkości " + txtPopulationSize.Text + ":\n";
             
@@ -420,21 +529,45 @@ namespace AlgorytmEwolucyjny
             // Czyszczenie przed kolejnym wywołaniem
             argumentsString.Clear();
             argumentsString = new List<string>();
-            equationString = "";
+            //equationString = "";
             eq = new org.mariuszgromada.math.mxparser.Expression();
             System.GC.Collect(); // <- Garbage Collector
             algorithm.ClearAlgorithm();
             population.subjects.Clear();
-            allSolutions.Clear();
 
             btnEquation.IsEnabled = true;
+            plotRefresh.IsEnabled = true;
+            plotOnlyBest.IsEnabled = true;
             // MessageBox
             MessageBox.Show("Obliczono rozwiązania", "Ukończono", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void TxtPlot_TextChanged(object sender, TextChangedEventArgs e)
         {
-            p = System.Int32.Parse(txtPlot.Text);
+            if (!plotBusy)
+            {
+                if (txtPlot.Text != "")
+                    p = System.Int32.Parse(txtPlot.Text);
+                if (p < 10)
+                {
+                    p = 10;
+                }
+            }
+
+        }
+
+        private void PlotRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            while (plotBusy)
+            {
+                Thread.Sleep(100);
+            }
+            plotChart();
+        }
+
+        private void PlotOnlyBest_Click(object sender, RoutedEventArgs e)
+        {
+            plotPoint(allSolutions[0]);
         }
     }
 }

@@ -6,6 +6,7 @@
         xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:local="clr-namespace:AlgorytmEwolucyjny"
         mc:Ignorable="d"
+		Closing="Window_Closing"
         Title="Teoria i metody optymalizacji - algorytm ewolucyjny" Icon="icon.ico" Height="600" Width="800">
 	<Viewbox Stretch="Fill">
 		<Grid>
@@ -32,7 +33,9 @@
 			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Argumenty i przedziały punktów startowych:" HorizontalAlignment="Left" Margin="462,70,0,0" VerticalAlignment="Top"/>
 			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Postęp:" HorizontalAlignment="Left" Margin="462,477,0,0" VerticalAlignment="Top"/>
 			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Dokładność wykresu (próbki):" HorizontalAlignment="Left" Margin="462,443,0,0" VerticalAlignment="Top"/>
-			<TextBox x:Name="txtPlot" HorizontalAlignment="Left" Height="23" Margin="655,439,0,0" TextWrapping="Wrap" Text="20" MaxLength="3" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Width="83" PreviewTextInput="PreviewTextInput" RenderTransformOrigin="0.567,3.217" TextChanged="TxtPlot_TextChanged"/>
+			<TextBox x:Name="txtPlot" HorizontalAlignment="Left" Height="23" Margin="655,439,0,0" TextWrapping="Wrap" Text="40" MaxLength="3" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Width="83" PreviewTextInput="PreviewTextInput" RenderTransformOrigin="0.567,3.217" TextChanged="TxtPlot_TextChanged"/>
+			<Button x:Name="plotRefresh" Content="Wymuś odświeżenie" HorizontalAlignment="Left" Margin="313,206,0,0" VerticalAlignment="Top" Width="119" Click="PlotRefresh_Click"/>
+			<Button x:Name="plotOnlyBest" Content="Zaznacz najlepszy" HorizontalAlignment="Left" Margin="10,206,0,0" VerticalAlignment="Top" Width="129" Click="PlotOnlyBest_Click"/>
 
 		</Grid>
 	</Viewbox>
