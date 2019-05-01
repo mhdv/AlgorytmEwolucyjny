@@ -3,11 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:local="clr-namespace:AlgorytmEwolucyjny"
         mc:Ignorable="d"
         Title="Teoria i metody optymalizacji - algorytm ewolucyjny" Icon="icon.ico" Height="600" Width="800">
 	<Viewbox Stretch="Fill">
 		<Grid>
+			<oxy:PlotView x:Name="pltModel" Model="{Binding plotModel}" Margin="10,206,359,10"/>
 			<TextBox x:Name="txtEquation" HorizontalAlignment="Left" Height="22" Margin="10,35,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="772" TextChanged="TxtEquation_TextChanged"/>
 			<Button x:Name="btnEquation" Content="Zatwierdź" HorizontalAlignment="Left" Margin="707,539,0,0" VerticalAlignment="Top" Width="75" Click="btnEquation_Click"/>
 			<TextBox x:Name="tmpSolution" HorizontalAlignment="Left" Margin="10,68,0,0" TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Auto" Text="Rozwiązanie: " VerticalAlignment="Top" Height="133" Width="423"/>
@@ -29,6 +31,8 @@
 			<TextBlock x:Name="txtProgress" HorizontalAlignment="Center" Margin="618,509,138,0" TextWrapping="Wrap" Text="0%" VerticalAlignment="Top" Width="36"/>
 			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Argumenty i przedziały punktów startowych:" HorizontalAlignment="Left" Margin="462,70,0,0" VerticalAlignment="Top"/>
 			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Postęp:" HorizontalAlignment="Left" Margin="462,477,0,0" VerticalAlignment="Top"/>
+			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Dokładność wykresu (próbki):" HorizontalAlignment="Left" Margin="462,443,0,0" VerticalAlignment="Top"/>
+			<TextBox x:Name="txtPlot" HorizontalAlignment="Left" Height="23" Margin="655,439,0,0" TextWrapping="Wrap" Text="20" MaxLength="3" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Width="83" PreviewTextInput="PreviewTextInput" RenderTransformOrigin="0.567,3.217" TextChanged="TxtPlot_TextChanged"/>
 
 		</Grid>
 	</Viewbox>

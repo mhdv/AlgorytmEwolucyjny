@@ -11,6 +11,9 @@ using System.Windows.Data;
 using System.Windows.Input;
 using org.mariuszgromada.math.mxparser;
 using org.mariuszgromada.math.mxparser.parsertokens;
+using OxyPlot;
+using OxyPlot.Axes;
+using OxyPlot.Series;
 
 /*
 PRZYKŁADY FUNKCJI
@@ -62,12 +65,120 @@ namespace AlgorytmEwolucyjny
         string commaSeparatedArguments;
         Population population = new Population();
         List<Subject> allSolutions = new List<Subject>();
+        int p = 400;
+
+        public string Title { get; private set; }
+
+        public IList<DataPoint> Points { get; private set; }
 
         public MainWindow()
         {
             InitializeComponent();
             InitializeOtherComponents();
             variablesGrid.CellEditEnding += myDG_CellEditEnding;
+        }
+
+        private PlotModel plot(org.mariuszgromada.math.mxparser.Expression equa)
+        {
+            var model = new PlotModel();
+
+            List<Token> tokensList = eq.getCopyOfInitialTokens();
+            foreach (Token t in tokensList)
+            {
+                if (t.tokenTypeId == Token.NOT_MATCHED)
+                {
+                    if (!argumentsString.Contains(t.tokenStr))
+                    {
+                        argumentsString.Add(t.tokenStr);
+                    }
+                }
+            }
+            commaSeparatedArguments = string.Join(", ", argumentsString);
+            f = new Function("f(" + commaSeparatedArguments + ") = " + equationString);
+
+            if (argumentsString.ToArray().Length > 1)
+            {
+                model.Title = "Warstwice: ";
+                List<double[]> xy = new List<double[]>();
+                foreach (var arg in arguments)
+                {
+                    xy.Add(ArrayBuilder.CreateVector(arg.Minimum, arg.Maximum, p));
+                }
+                var infunc = new string[p, p];
+
+                for (int i = 0; i < p; ++i)
+                {
+                    for (int j = 0; j < p; ++j)
+                    {
+                        for (int k = 0; k < xy.ToArray().Length; ++k)
+                        {
+                            if (k == 0)
+                                infunc[i, j] += xy[k][i].ToString().Replace(',', '.');
+                            if (k == 1)
+                                infunc[i, j] += "," + xy[k][j].ToString().Replace(',', '.');
+                            if (k > 1)
+                                infunc[i, j] += ", 0";
+                        }
+                    }
+                }
+
+                var data = new double[p, p];
+                for (int i = 0; i < p; ++i)
+                {
+                    for (int j = 0; j < p; ++j)
+                    {
+                        equa = new org.mariuszgromada.math.mxparser.Expression("f(" + infunc[i, j] + ")", f);
+                        data[i, j] = equa.calculate();
+                    }
+                }
+
+                var cs = new ContourSeries
+                {
+                    Color = OxyColors.Black,
+                    LabelBackground = OxyColors.White,
+                    ColumnCoordinates = xy[0],
+                    RowCoordinates = xy[1],
+                    Data = data
+                };
+                model.Series.Add(cs);
+            }
+            else
+            {
+                p = p * 10;
+                model.Title = "Wykres: ";
+                LineSeries series1 = new LineSeries();
+                List<double[]> xy = new List<double[]>();
+                foreach (var arg in arguments)
+                {
+                    xy.Add(ArrayBuilder.CreateVector(arg.Minimum, arg.Maximum, p));
+                }
+                var infunc = new string[p];
+                for (int i = 0; i < p; ++i)
+                {
+                    infunc[i] = xy[0][i].ToString().Replace(',', '.');
+                }
+                var data = new double[p];
+                for (int i = 0; i < p; ++i)
+                {
+                    equa = new org.mariuszgromada.math.mxparser.Expression("f(" + infunc[i] + ")", f);
+                    data[i] = equa.calculate();
+                }
+                List<DataPoint> pnts = new List<DataPoint>();
+                for (int i = 0; i < p; ++i)
+                {
+                    series1.Points.Add(new DataPoint(xy[0][i], data[i]));
+                    //pnts.Add(new DataPoint(xy[0][i], data[i]));
+                }
+                model.Series.Add(series1);
+                p = p / 10;
+            }
+
+            argumentsString.Clear();
+
+            //var scatterSeries = new ScatterSeries { MarkerType = MarkerType.Circle };
+            //scatterSeries.Points.Add(new ScatterPoint(0.56, 0.56, 5, 254));
+            //model.Series.Add(scatterSeries);
+            return model;
         }
 
         private void myDG_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
@@ -99,6 +210,7 @@ namespace AlgorytmEwolucyjny
                             MessageBox.Show("Wpisuj tylko liczby rzeczywiste (kropka zamiast przecinka)!", "Błąd!", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
+                pltModel.Model = plot(eq);
             }
         }
 
@@ -242,6 +354,7 @@ namespace AlgorytmEwolucyjny
                     }
                 }
             }
+            pltModel.Model = plot(eq);
             variablesGrid.AutoGenerateColumns = true;
             variablesGrid.ItemsSource = null;
             variablesGrid.ItemsSource = arguments;
@@ -319,6 +432,9 @@ namespace AlgorytmEwolucyjny
             MessageBox.Show("Obliczono rozwiązania", "Ukończono", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-
+        private void TxtPlot_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            p = System.Int32.Parse(txtPlot.Text);
+        }
     }
 }

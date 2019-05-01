@@ -32,3 +32,10 @@ C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\obj\Debug
 C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\obj\Debug\AlgorytmEwolucyjny.csproj.CopyComplete
 C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\obj\Debug\AlgorytmEwolucyjny.exe
 C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\obj\Debug\AlgorytmEwolucyjny.pdb
+C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\bin\Debug\OxyPlot.dll
+C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\bin\Debug\OxyPlot.Wpf.dll
+C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\bin\Debug\OxyPlot.pdb
+C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\bin\Debug\OxyPlot.xml
+C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\bin\Debug\OxyPlot.Wpf.pdb
+C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\bin\Debug\OxyPlot.Wpf.xml
+C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\obj\Debug\GeneratedInternalTypeHelper.g.cs
