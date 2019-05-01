@@ -567,7 +567,8 @@ namespace AlgorytmEwolucyjny
 
         private void PlotOnlyBest_Click(object sender, RoutedEventArgs e)
         {
-            plotPoint(allSolutions[0]);
+            if(allSolutions.ToArray().Length>0)
+                plotPoint(allSolutions[0]);
         }
     }
 }
