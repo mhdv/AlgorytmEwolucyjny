@@ -89,10 +89,16 @@ namespace AlgorytmEwolucyjny
             // Czy wątek rysowania jest aktualnie zajęty?
             if (!plotBusy)
             {
+                // Na czas rysowania wyłączamy wszystkie przyciski
+                btnEquation.IsEnabled = false;
+                plotRefresh.IsEnabled = false;
+                plotOnlyBest.IsEnabled = false;
+
                 model = new PlotModel();
                 BackgroundWorker worker2 = new BackgroundWorker();
                 worker2.WorkerReportsProgress = true;
                 worker2.DoWork += worker_DoWork2;
+                worker2.ProgressChanged += worker_ProgressChanged2;
                 worker2.RunWorkerCompleted += worker_RunWorkerCompleted2;
                 worker2.RunWorkerAsync();
             }
@@ -105,7 +111,12 @@ namespace AlgorytmEwolucyjny
         //
         void worker_RunWorkerCompleted2(object sender, RunWorkerCompletedEventArgs e)
         {
+            plotPb.Value = 100;
             pltModel.Model = (PlotModel)e.Result;
+            // Włączamy ponownie przyciski
+            btnEquation.IsEnabled = true;
+            plotRefresh.IsEnabled = true;
+            plotOnlyBest.IsEnabled = true;
             // Ustawianie maxymalnego zoomout wykresów/warstwic
             if (arguments.ToArray().Length > 1)
             {
@@ -128,7 +139,16 @@ namespace AlgorytmEwolucyjny
 
             plotBusy = false;
         }
-        
+
+        //
+        // Zmiana postępu rysowania
+        //
+        void worker_ProgressChanged2(object sender, ProgressChangedEventArgs e)
+        {
+            // Ustawiamy informacje o pasku postępu
+            plotPb.Value = e.ProgressPercentage;
+        }
+
         //
         // Rysowanie punktu na wykresie
         //
@@ -273,8 +293,10 @@ namespace AlgorytmEwolucyjny
                 {
                     for (int j = 0; j < p; ++j)
                     {
+                        int progressPercentage = Convert.ToInt32(((double)i / p) * 100);
                         org.mariuszgromada.math.mxparser.Expression equa = new org.mariuszgromada.math.mxparser.Expression("f(" + infunc[i, j] + ")", f);
                         data[i, j] = equa.calculate();
+                        (sender as BackgroundWorker).ReportProgress(progressPercentage);
                     }
                 }
 
@@ -313,8 +335,10 @@ namespace AlgorytmEwolucyjny
                 var data = new double[p];
                 for (int i = 0; i < p; ++i)
                 {
+                    int progressPercentage = Convert.ToInt32(((double)i / p) * 100);
                     org.mariuszgromada.math.mxparser.Expression equa = new org.mariuszgromada.math.mxparser.Expression("f(" + infunc[i] + ")", f);
                     data[i] = equa.calculate();
+                    (sender as BackgroundWorker).ReportProgress(progressPercentage);
                 }
 
                 // Lista wygenerowanych punktów dodawana do zmiennej typu lineseries w celu wygenerowania wykresu

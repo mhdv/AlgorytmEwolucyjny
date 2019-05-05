@@ -38,6 +38,7 @@
 			<Button x:Name="plotOnlyBest" Content="Zaznacz najlepszy" HorizontalAlignment="Left" Margin="10,206,0,0" VerticalAlignment="Top" Width="129" Click="PlotOnlyBest_Click"/>
 			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Szukaj:" HorizontalAlignment="Left" Margin="462,327,0,0" VerticalAlignment="Top"/>
 			<ComboBox x:Name="comboFind" SelectedIndex="0" HorizontalAlignment="Left" Margin="618,329,0,0" VerticalAlignment="Top" Width="120"/>
+			<ProgressBar x:Name="plotPb" HorizontalAlignment="Left" Height="9" Margin="313,231,0,0" VerticalAlignment="Top" Width="119"/>
 
 		</Grid>
 	</Viewbox>
