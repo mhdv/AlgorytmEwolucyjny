@@ -45,8 +45,7 @@ RÓWNANIE: (1+(((x1+x2+1)^2)*(19-14*x1+3*x1^2-14*x2+6*x1*x2+3*x2^2)))*((30+((2*x
 /*
 
 LISTA AKTUALNYCH PROBLEMÓW:
-- calculate() nie zwraca wartości ujemnych?
-
+- BRAK WYKRYTYCH PROBLEMÓW
 
 */
 
@@ -57,23 +56,23 @@ namespace AlgorytmEwolucyjny
     /// </summary>
     public partial class MainWindow : Window
     {
-        public string equationString;
-        public org.mariuszgromada.math.mxparser.Expression eq;
-        public List<string> argumentsString = new List<string>();
-        ObservableCollection<Arguments> arguments = new ObservableCollection<Arguments>();
-        Function f;
-        Algorithm algorithm = new Algorithm();
-        string commaSeparatedArguments;
-        Population population = new Population();
-        List<Subject> allSolutions = new List<Subject>();
-        int p = 400;
-        PlotModel model = new PlotModel();
-        bool plotBusy = false;
-
-        public string Title { get; private set; }
-
-        public IList<DataPoint> Points { get; private set; }
-
+        // Definicje zmiennych globalnych
+        public string equationString;   // równanie w postaci łańcucha znaków
+        public org.mariuszgromada.math.mxparser.Expression eq;  // równanie jako zmienna globalna
+        public List<string> argumentsString = new List<string>();   // lista argumentów w postaci łańcucha znaków
+        ObservableCollection<Arguments> arguments = new ObservableCollection<Arguments>();  // lista argumentów w postaci obiektów (kolekcja do wypisania)
+        Function f; // pomocnicza zmienna funkcji wpisanej do równania
+        Algorithm algorithm = new Algorithm();  // obiekt algorytmu
+        string commaSeparatedArguments; // argumenty rozdzielone przecinkami w postaci łańcucha znaków
+        Population population = new Population();   // obiekt populacji
+        List<Subject> allSolutions = new List<Subject>();   // lista wszystkich znalezionych rozwiązań
+        int p = 400;    // zmienna pomocnicza określająca dokładność wykresu
+        PlotModel model = new PlotModel();  // model do plotowania
+        bool plotBusy = false;  // czy model jest aktualnie plotowany?
+        
+        //
+        // Inicjalizacja głównego okna programu
+        //
         public MainWindow()
         {
             InitializeComponent();
@@ -81,35 +80,43 @@ namespace AlgorytmEwolucyjny
             variablesGrid.CellEditEnding += myDG_CellEditEnding;
         }
 
+        //
+        // Funkcja wywołująca plotowanie modelu w osobnym wątku
+        //
         private void plotChart()
         {
+            // Czy wątek rysowania jest aktualnie zajęty?
             if (!plotBusy)
             {
                 model = new PlotModel();
                 BackgroundWorker worker2 = new BackgroundWorker();
                 worker2.WorkerReportsProgress = true;
                 worker2.DoWork += worker_DoWork2;
-                worker2.ProgressChanged += worker_ProgressChanged2;
                 worker2.RunWorkerCompleted += worker_RunWorkerCompleted2;
                 worker2.RunWorkerAsync();
             }
-            else              
+            else
                 return;
         }
 
+        //
+        // Funkcja wywoływana po wykonaniu wątku rysowania
+        //
         void worker_RunWorkerCompleted2(object sender, RunWorkerCompletedEventArgs e)
         {
             pltModel.Model = (PlotModel)e.Result;
             plotBusy = false;
         }
-        void worker_ProgressChanged2(object sender, ProgressChangedEventArgs e)
-        {
-        }
         
+        //
+        // Rysowanie punktu na wykresie
+        //
         void plotPoint(Subject point)
         {
+            // Rysowanie punktu można wykonać tylko na narysowanym wykresie (wątek rysowania nie może być zajęty)
             if (!plotBusy)
             {
+                // Jeśli liczba argumentów jest > 1 to rysujemy dla x1 i x2 (przypadek warstwic)
                 if(arguments.ToArray().Length > 1)
                 {
                     var scatterSeries = new ScatterSeries { MarkerType = MarkerType.Circle };
@@ -117,6 +124,7 @@ namespace AlgorytmEwolucyjny
                     model.Series.Add(scatterSeries);
                     pltModel.InvalidatePlot(true);
                 }
+                // Jeśli liczba argumentów = 1 (inny przypadek nie jest już możliwy) to rysujemy dla x1 i rozwiązania (przypadek wykresu)
                 else
                 {
                     var scatterSeries = new ScatterSeries { MarkerType = MarkerType.Circle };
@@ -128,11 +136,17 @@ namespace AlgorytmEwolucyjny
 
         }
 
+        //
+        // Funkcja wywoływana przez wątek do rysowania wykresów - tutaj plotujemy model
+        //
         void worker_DoWork2(object sender, DoWorkEventArgs e)
         {
-            plotBusy = true;
-            // Tymczasowe równanie - później jest nadpisywane
+            plotBusy = true; // wątek rysowania jest zajęty
+
+            // Tymczasowe równanie - jest nadpisywane w różnych miejscach kodu
             eq = new org.mariuszgromada.math.mxparser.Expression(equationString);
+
+            // Lista tokenów (argumentów) dodawana do listy łańcuchów znaków argumentów
             List<Token> tokensList = eq.getCopyOfInitialTokens();
             foreach (Token t in tokensList)
             {
@@ -144,8 +158,14 @@ namespace AlgorytmEwolucyjny
                     }
                 }
             }
+
+            // Rozdzielenie argumentów przecinkami
             commaSeparatedArguments = string.Join(", ", argumentsString);
+
+            // Utworzenie funkcji na podstawie argumentów i równania
             f = new Function("f(" + commaSeparatedArguments + ") = " + equationString);
+
+            // Wyłapywanie błędów równania
             if (argumentsString.ToArray().Length < 1)
             {
                 argumentsString.Clear();
@@ -188,33 +208,45 @@ namespace AlgorytmEwolucyjny
                     return;
                 }
             
-
+            // Jeśli liczba argumentów > 1 to rysujemy warstwice
             if (arguments.ToArray().Length > 1)
             {
-                model.Title = "Warstwice: ";
-                List<double[]> xy = new List<double[]>();
+                model.Title = "Warstwice: "; // tytuł modelu to warstwice
+                List<double[]> xy = new List<double[]>(); // lista tablic zmiennych double przechowująca minimum i maximum konkretnych argumentów
+
+                // Zapisywanie tych zmiennych jest potrzebne do określenia granic wykresów
                 foreach (var arg in arguments)
                 {
                     xy.Add(ArrayBuilder.CreateVector(arg.Minimum, arg.Maximum, p));
                 }
-                var infunc = new string[p, p];
 
+                // Pomocnicza tablica łańcuchów znaków argumentów funkcji (trochę czarów się tutaj dzieje)
+                // Finalnie infunc powinien zawierać łańcuchy znaków postaci:
+                //      Przykład dla 2 argumentów: 0.125, 1.216
+                //      Przykład dla 3 argumentów: 0.125, 1.216, 0
+                //      Przykład dla 4 argumentów: 0.125, 1.216, 0, 0
+                // Zera na końcu są wstawiane dlatego, że spłaszczamy wielowymiarowy wykres do postaci warstwic
+                var infunc = new string[p, p];
                 for (int i = 0; i < p; ++i)
                 {
                     for (int j = 0; j < p; ++j)
                     {
                         for (int k = 0; k < xy.ToArray().Length; ++k)
                         {
+                            // Jeśli jest to pierwszy argument to dodajemy go po prostu do łańcucha znaków
                             if (k == 0)
                                 infunc[i, j] += xy[k][i].ToString().Replace(',', '.');
+                            // Jeżeli jest to drugi argument to dodajemy go do łańcucha znaków z przecinkiem przed wartością
                             if (k == 1)
                                 infunc[i, j] += "," + xy[k][j].ToString().Replace(',', '.');
+                            // Jeżeli jest to każdy kolejny argument to dodajemy 0 do łańcucha znaków z przecinkiem przed
                             if (k > 1)
                                 infunc[i, j] += ", 0";
                         }
                     }
                 }
 
+                // Tablica zawierająca wyrażenia do obliczenia - korzysta z poprzedniej tablicy pomocniczej do określenia tych wyrażeń
                 var data = new double[p, p];
                 for (int i = 0; i < p; ++i)
                 {
@@ -225,6 +257,7 @@ namespace AlgorytmEwolucyjny
                     }
                 }
 
+                // Tworzenie zmiennej kontur - wykorzystywana do rysowania warstwic
                 var cs = new ContourSeries
                 {
                     Color = OxyColors.Red,
@@ -233,58 +266,67 @@ namespace AlgorytmEwolucyjny
                     RowCoordinates = xy[1],
                     Data = data
                 };
+                // Dodanie kontur do modelu
                 model.Series.Add(cs);
             }
+            // Jeśli liczba argumentów = 1 to rysujemy wykres
             else
             {
-                p = p * 10;
-                model.Title = "Wykres: ";
-                LineSeries series1 = new LineSeries();
-                List<double[]> xy = new List<double[]>();
+                p = p * 10; // zmieniamy dokładność na 10-krotnie większą od ustalonej ze względu na mniejszą złożoność obliczeniową
+                model.Title = "Wykres: ";   // tytuł modelu to wykres
+                LineSeries series1 = new LineSeries();  // zmienna lineseries używana do rysowania wykresów
+                List<double[]> xy = new List<double[]>();   // lista tablic tak jak w poprzednim przypadku - tutaj przechowuje tylko jeden argument, ale zachowanie konwencji ułatwiło dalsze zadania
                 foreach (var arg in arguments)
                 {
                     xy.Add(ArrayBuilder.CreateVector(arg.Minimum, arg.Maximum, p));
                 }
+
+                // Tak samo jak powyżej
                 var infunc = new string[p];
                 for (int i = 0; i < p; ++i)
                 {
                     infunc[i] = xy[0][i].ToString().Replace(',', '.');
                 }
+
+                // Tak samo jak powyżej
                 var data = new double[p];
                 for (int i = 0; i < p; ++i)
                 {
                     org.mariuszgromada.math.mxparser.Expression equa = new org.mariuszgromada.math.mxparser.Expression("f(" + infunc[i] + ")", f);
                     data[i] = equa.calculate();
                 }
+
+                // Lista wygenerowanych punktów dodawana do zmiennej typu lineseries w celu wygenerowania wykresu
                 List<DataPoint> pnts = new List<DataPoint>();
                 for (int i = 0; i < p; ++i)
                 {
                     series1.Points.Add(new DataPoint(xy[0][i], data[i]));
-                    //pnts.Add(new DataPoint(xy[0][i], data[i]));
                 }
+                // Kolor wykresu ustalamy na czerwony - tak żeby wykresy i warstwice były tego samego koloru
                 series1.Color = OxyColors.Red;
                 model.Series.Add(series1);
-                p = p / 10;
+                p = p / 10; // przywracamy domyślną wartość zmiennej odpowiadającej za dokładność wykresu
             }
 
+            // Czyścimy listę argumentów w postaci łańcuchów znaków
             argumentsString.Clear();
+            // Czyścimy wyrażenie
             eq = new org.mariuszgromada.math.mxparser.Expression();
+            // Zapisujemy utworzony model w wyniku wątku rysowania
             e.Result = model;
-
         }
 
+        //
+        // Event zamykania okna (wyjście z programu)
+        //
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             Environment.Exit(Environment.ExitCode);
         }
 
-        //private PlotModel plot(org.mariuszgromada.math.mxparser.Expression equa)
-        //{
-        //    var model = new PlotModel();
-
-
-        //}
-
+        //
+        // Edycja listy argumentów wyświetlanej w oknie programu
+        //
         private void myDG_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
             if (e.EditAction == DataGridEditAction.Commit)
@@ -293,20 +335,24 @@ namespace AlgorytmEwolucyjny
                 if (column != null)
                 {
                     var bindingPath = (column.Binding as Binding).Path.Path;
+                    // Edycja minimów
                     if (bindingPath == "Minimum")
                     {
                         int rowIndex = e.Row.GetIndex();
                         var el = e.EditingElement as TextBox;
+                        // Wyrażenie regularne które sprawdza czy wpisywana wartość nie zawiera niedozwolonych znaków
                         Regex regex = new Regex(@"-?\d+(?:\.\d+)?");
                         if(regex.Match(el.Text).Success)
                             arguments[rowIndex].Minimum = double.Parse(el.Text, CultureInfo.InvariantCulture);
                         else
                             MessageBox.Show("Wpisuj tylko liczby rzeczywiste (kropka zamiast przecinka)!", "Błąd!", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
+                    // Edycja maximów
                     if (bindingPath == "Maximum")
                     {
                         int rowIndex = e.Row.GetIndex();
                         var el = e.EditingElement as TextBox;
+                        // Wyrażenie regularne które sprawdza czy wpisywana wartość nie zawiera niedozwolonych znaków
                         Regex regex = new Regex(@"-?\d+(?:\.\d+)?");
                         if (regex.Match(el.Text).Success)
                             arguments[rowIndex].Maximum = double.Parse(el.Text, CultureInfo.InvariantCulture);
@@ -317,9 +363,12 @@ namespace AlgorytmEwolucyjny
             }
         }
 
+        //
+        // Inicjalizacja innych komponentów - comboFunctions oraz comboReproductionMethod
+        //
         private void InitializeOtherComponents()
         {
-            // Iitialize comboFunctions
+            // Inicjalizacja comboFunctions
             comboFunctions.Items.Add("Wybierz");
             comboFunctions.Items.Add("x1^4+x2^4-0.62*x1^2-0.62*x2^2");
             comboFunctions.Items.Add("100*(x2-x1^2)^2+(1-x1)^2");
@@ -327,10 +376,10 @@ namespace AlgorytmEwolucyjny
             comboFunctions.Items.Add("4*x1^2-2.1*x1^4+(1/3)*x1^6+x1*x2-4*x2^2+4*x2^4");
             comboFunctions.Items.Add("sin(5.1*pi*x1+0.5)^6");
             comboFunctions.Items.Add("(1+(((x1+x2+1)^2)*(19-14*x1+3*x1^2-14*x2+6*x1*x2+3*x2^2)))*((30+((2*x1-3*x2)^2)*(18-32*x1+12*x1^2+48*x2-36*x1*x2+27*x2^2)))");
-            // Initialize comboReproductionMethod
+            // Inicjalizacja comboReproductionMethod
             comboReproductionMethod.Items.Add("Domyślna");
             comboReproductionMethod.Items.Add("Krzyżowanie uśredniające");
-            comboReproductionMethod.Items.Add("Krzyżowanie dwupunktowe");
+            comboReproductionMethod.Items.Add("Tylko mutacje");
         }
 
         //
@@ -338,21 +387,24 @@ namespace AlgorytmEwolucyjny
         //
         private void btnEquation_Click(object sender, RoutedEventArgs e)
         {
+            // Czyścimy listę wszystkich rozwiązań
             allSolutions.Clear();
+
+            // Sprawdzamy czy populacja jest większa niż 5 - dla mniejszych program nie działa poprawnie
             if (System.Int32.Parse(txtPopulationSize.Text) <= 5)
             {
                 MessageBox.Show("Populacja powinna być większa niż 5!", "Błąd!", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            // Definicje
+
+            // Inicjalizacja zmiennych
             algorithm = new Algorithm();
             commaSeparatedArguments = "";
             population = new Population();
 
             // Równanie w postaci łańcucha znaków
             equationString = txtEquation.Text;
-
-            // Tymczasowe równanie - później jest nadpisywane
+            // Tymczasowe równanie - jest nadpisywane w różnych miejscach kodu
             eq = new org.mariuszgromada.math.mxparser.Expression(equationString);
 
             // Odczytywanie argumentów wpisanego równania
@@ -366,9 +418,8 @@ namespace AlgorytmEwolucyjny
                         argumentsString.Add(t.tokenStr);
                 }
             }
-            //
+
             // Łapanie błędów
-            //
             if (argumentsString.ToArray().Length < 1)
             {
                 tmpSolution.Text = "Błędne równanie - brak argumentów";
@@ -411,12 +462,16 @@ namespace AlgorytmEwolucyjny
             // Tworzenie populacji i jej inicjalizacja / inicjalizacja algorytmu
             algorithm.AlgorithmInit(comboReproductionMethod.SelectedIndex, System.Int32.Parse(txtIterations.Text));
             population.initPopulation(arguments, System.Convert.ToInt32(txtPopulationSize.Text));
+
+            // Progressbar algorytmu przyjmuje początkową wartość 0
             pbProgress.Value = 0;
 
+            // Na czas wykonywania algorytmu wyłączamy wszystkie przyciski
             btnEquation.IsEnabled = false;
             plotRefresh.IsEnabled = false;
             plotOnlyBest.IsEnabled = false;
 
+            // Tworzymy nowy wątek do wykonania obliczeń algorytmu
             BackgroundWorker worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
             worker.DoWork += worker_DoWork;
@@ -434,6 +489,9 @@ namespace AlgorytmEwolucyjny
             e.Handled = regex.IsMatch(e.Text);
         }
 
+        //
+        // Zmiana zaznaczenia przykładowej funkcji
+        //
         private void ComboFunctions_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (comboFunctions.SelectedIndex != 0)
@@ -441,12 +499,18 @@ namespace AlgorytmEwolucyjny
             equationString = comboFunctions.SelectedItem.ToString();
         }
 
+        //
+        // Zmiana wpisanego równania
+        //
         private void TxtEquation_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
+            // Inicjowanie zmiennych
             arguments = new ObservableCollection<Arguments>();
             equationString = txtEquation.Text;
-            // Tymczasowe równanie - później jest nadpisywane
+
+            // Tymczasowe równanie - jest nadpisywane w różnych miejscach kodu
             eq = new org.mariuszgromada.math.mxparser.Expression(equationString);
+
             // Odczytywanie argumentów wpisanego równania
             List<Token> tokensList = eq.getCopyOfInitialTokens();
             tmpSolution.Text = "";
@@ -462,41 +526,60 @@ namespace AlgorytmEwolucyjny
                     }
                 }
             }
+
+            // Ustawienia listy argumentów
             variablesGrid.AutoGenerateColumns = true;
             variablesGrid.ItemsSource = null;
             variablesGrid.ItemsSource = arguments;
             variablesGrid.Items.Refresh();
+            
+            // Czyszczenie po wykonaniu funkcji
             argumentsString.Clear();
             tokensList.Clear();
-            
         }
         
+        //
+        // Wątek odpowiadający za działanie algorytmu
+        //
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {
+            // Główna pętla wątku - wykonuje się tyle razy ile iteracji wprowadził użytkownik
             for (int k = 0; k < algorithm.iterations; k++)
             {
+                // Zmienna definiująca postęp w postaci procentowej
                 int progressPercentage = Convert.ToInt32(((double)k / algorithm.iterations) * 100);
+
                 // Sortowanie według najlepszych rozwiązań
                 population.subjects = population.subjects.OrderBy(o => o.solution).ToList();
 
                 // Uruchomienie algorytmu
                 population = algorithm.RunAlgorithm(population);
                 org.mariuszgromada.math.mxparser.Expression equa = new org.mariuszgromada.math.mxparser.Expression();
+
                 // Tworzenie wyrażeń oraz obliczanie rozwiązań aktualnej populacji
                 foreach (var sub in population.subjects)
                 {
                     equa = new org.mariuszgromada.math.mxparser.Expression("f(" + string.Join(", ", sub.stringValues) + ")", f);
                     sub.solution = equa.calculate();
                 }
+
+                // Reportowanie postępu do aktualizacja progressbara
                 (sender as BackgroundWorker).ReportProgress(progressPercentage, population.subjects[0]);
             }
+            // Po wykonaniu algorytmu zapisujemy najlepszy obiekt w wyniku wątku
             e.Result = population.subjects[0];
         }
 
+        //
+        // Zmiana postępu wykonywania algorytmu
+        //
         void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
+            // Ustawiamy informacje o pasku postępu
             pbProgress.Value = e.ProgressPercentage;
             txtProgress.Text = e.ProgressPercentage.ToString() + "%";
+
+            // Ustawiamy aktualne rozwiązanie algorytmu (to w konkretnej iteracji - nie najlepsze)
             if (e.UserState != null)
             {
                 var sol = (Subject)e.UserState;
@@ -504,44 +587,60 @@ namespace AlgorytmEwolucyjny
                 tmpSolution.Text += "ROZWIĄZANIE NIE JEST OSTATECZNE. ZACZEKAJ NA KONIEC PROCESU.\n";
                 tmpSolution.Text += "Aktualne rozwiązanie:   " + sol.solution + "\n";
                 tmpSolution.Text += "#######################################\n";
+
+                // Dodanie tego rozwiązania do listy wszystkich rozwiązań
                 allSolutions.Add(sol);
+
+                // Rysowanie tego konkretnego rozwiązania na wykresie
                 plotPoint(sol);
             }
         }
 
+        //
+        // Funkcja wywoływana po wykonaniu wątku algorytmu
+        //
         void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            // Działania na progressbar
             pbProgress.Value = 100;
             txtProgress.Text = "100%";
-            var sol = (Subject)e.Result;
-            allSolutions = allSolutions.OrderBy(o => o.solution).ToList();
-            plotPoint(allSolutions[0]);
-            // tymczasowe rozwiązanie równania
-            tmpSolution.Text = "Znalezione rozwiązania przy populacji wielkości " + txtPopulationSize.Text + ":\n";
-            
-                tmpSolution.Text += "#######################################\n";
-                tmpSolution.Text += "(" + commaSeparatedArguments + ") = " + "(" + string.Join(", ", allSolutions[0].stringValues) + ")" + "\n";
-                tmpSolution.Text += "Rozwiązanie:   " + allSolutions[0].solution + "\n";
-                tmpSolution.Text += "#######################################\n";
-            
 
+            // Zapisanie najlepszego rozwiązania do nowej zmiennej
+            var sol = (Subject)e.Result;
+
+            // Sortowanie wszystkich rozwiązań
+            allSolutions = allSolutions.OrderBy(o => o.solution).ToList();
+
+            // Rysowanie najlepszego rozwiązania
+            plotPoint(allSolutions[0]);
+
+            // Wypisanie najlepszego znalezionego rozwiązania
+            tmpSolution.Text = "Znalezione rozwiązania przy populacji wielkości " + txtPopulationSize.Text + ":\n";
+            tmpSolution.Text += "#######################################\n";
+            tmpSolution.Text += "(" + commaSeparatedArguments + ") = " + "(" + string.Join(", ", allSolutions[0].stringValues) + ")" + "\n";
+            tmpSolution.Text += "Rozwiązanie:   " + allSolutions[0].solution + "\n";
+            tmpSolution.Text += "#######################################\n";
 
             // Czyszczenie przed kolejnym wywołaniem
             argumentsString.Clear();
             argumentsString = new List<string>();
-            //equationString = "";
             eq = new org.mariuszgromada.math.mxparser.Expression();
             System.GC.Collect(); // <- Garbage Collector
             algorithm.ClearAlgorithm();
             population.subjects.Clear();
 
+            // Aktywowanie ponownie przycisków
             btnEquation.IsEnabled = true;
             plotRefresh.IsEnabled = true;
             plotOnlyBest.IsEnabled = true;
-            // MessageBox
+
+            // MessageBox informujący o ukończeniu działania algorytmu
             MessageBox.Show("Obliczono rozwiązania", "Ukończono", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+        //
+        // Zmiana wartości dokładności rysowania wykresów/warstwic
+        //
         private void TxtPlot_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (!plotBusy)
@@ -556,6 +655,9 @@ namespace AlgorytmEwolucyjny
 
         }
 
+        //
+        // Przycisk "Wymuś odświeżenie" - wywołuje rysowanie modelu
+        //
         private void PlotRefresh_Click(object sender, RoutedEventArgs e)
         {
             while (plotBusy)
@@ -565,6 +667,9 @@ namespace AlgorytmEwolucyjny
             plotChart();
         }
 
+        //
+        // Przycisk który ponownie zaznaczy na wykresie tylko najlepsze rozwiązanie
+        //
         private void PlotOnlyBest_Click(object sender, RoutedEventArgs e)
         {
             if(allSolutions.ToArray().Length>0)
