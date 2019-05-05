@@ -27,7 +27,7 @@
 			<Grid Background="Black" Height="24" Width="1" VerticalAlignment="Center" Margin="357,6,434,539"/>
 			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Przykładowe funkcje:" HorizontalAlignment="Left" Margin="414,6,0,0" VerticalAlignment="Top"/>
 			<Label Content="Autorzy: Michał Filipowicz &amp; Rafał Madeja" HorizontalAlignment="Left" Margin="451,533,0,0" VerticalAlignment="Top"/>
-			<DataGrid x:Name="variablesGrid" AutoGenerateColumns="True" HorizontalAlignment="Left" Height="248" Margin="462,94,0,0" VerticalAlignment="Top" Width="310"/>
+			<DataGrid x:Name="variablesGrid" AutoGenerateColumns="True" HorizontalAlignment="Left" Height="219" Margin="462,94,0,0" VerticalAlignment="Top" Width="310"/>
 			<ProgressBar x:Name="pbProgress" HorizontalAlignment="Left" Height="33" Margin="462,501,0,0" VerticalAlignment="Top" Width="320"/>
 			<TextBlock x:Name="txtProgress" HorizontalAlignment="Center" Margin="618,509,138,0" TextWrapping="Wrap" Text="0%" VerticalAlignment="Top" Width="36"/>
 			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Argumenty i przedziały punktów startowych:" HorizontalAlignment="Left" Margin="462,70,0,0" VerticalAlignment="Top"/>
@@ -36,6 +36,8 @@
 			<TextBox x:Name="txtPlot" HorizontalAlignment="Left" Height="23" Margin="655,439,0,0" TextWrapping="Wrap" Text="40" MaxLength="3" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Width="83" PreviewTextInput="PreviewTextInput" RenderTransformOrigin="0.567,3.217" TextChanged="TxtPlot_TextChanged"/>
 			<Button x:Name="plotRefresh" Content="Wymuś odświeżenie" HorizontalAlignment="Left" Margin="313,206,0,0" VerticalAlignment="Top" Width="119" Click="PlotRefresh_Click"/>
 			<Button x:Name="plotOnlyBest" Content="Zaznacz najlepszy" HorizontalAlignment="Left" Margin="10,206,0,0" VerticalAlignment="Top" Width="129" Click="PlotOnlyBest_Click"/>
+			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Szukaj:" HorizontalAlignment="Left" Margin="462,327,0,0" VerticalAlignment="Top"/>
+			<ComboBox x:Name="comboFind" SelectedIndex="0" HorizontalAlignment="Left" Margin="618,329,0,0" VerticalAlignment="Top" Width="120"/>
 
 		</Grid>
 	</Viewbox>

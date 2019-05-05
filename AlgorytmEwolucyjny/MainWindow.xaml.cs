@@ -69,6 +69,7 @@ namespace AlgorytmEwolucyjny
         int p = 400;    // zmienna pomocnicza określająca dokładność wykresu
         PlotModel model = new PlotModel();  // model do plotowania
         bool plotBusy = false;  // czy model jest aktualnie plotowany?
+        int minmax = 0;
         
         //
         // Inicjalizacja głównego okna programu
@@ -382,6 +383,9 @@ namespace AlgorytmEwolucyjny
             comboReproductionMethod.Items.Add("Domyślna");
             comboReproductionMethod.Items.Add("Krzyżowanie uśredniające");
             comboReproductionMethod.Items.Add("Tylko mutacje");
+            // Inicjalizacja comboFind
+            comboFind.Items.Add("Minimum");
+            comboFind.Items.Add("Maximum");
         }
 
         //
@@ -473,6 +477,8 @@ namespace AlgorytmEwolucyjny
             plotRefresh.IsEnabled = false;
             plotOnlyBest.IsEnabled = false;
 
+            minmax = comboFind.SelectedIndex;
+
             // Tworzymy nowy wątek do wykonania obliczeń algorytmu
             BackgroundWorker worker = new BackgroundWorker();
             worker.WorkerReportsProgress = true;
@@ -552,7 +558,10 @@ namespace AlgorytmEwolucyjny
                 int progressPercentage = Convert.ToInt32(((double)k / algorithm.iterations) * 100);
 
                 // Sortowanie według najlepszych rozwiązań
-                population.subjects = population.subjects.OrderBy(o => o.solution).ToList();
+                if(minmax == 0)
+                    population.subjects = population.subjects.OrderBy(o => o.solution).ToList();
+                else
+                    population.subjects = population.subjects.OrderByDescending(o => o.solution).ToList();
 
                 // Uruchomienie algorytmu
                 population = algorithm.RunAlgorithm(population);
@@ -610,8 +619,17 @@ namespace AlgorytmEwolucyjny
             // Zapisanie najlepszego rozwiązania do nowej zmiennej
             var sol = (Subject)e.Result;
 
-            // Sortowanie wszystkich rozwiązań
-            allSolutions = allSolutions.OrderBy(o => o.solution).ToList();
+            // Sortowanie według najlepszych rozwiązań
+            if (minmax == 0)
+            {
+                population.subjects = population.subjects.OrderBy(o => o.solution).ToList();
+                allSolutions = allSolutions.OrderBy(o => o.solution).ToList();
+            }
+            else
+            {
+                population.subjects = population.subjects.OrderByDescending(o => o.solution).ToList();
+                allSolutions = allSolutions.OrderByDescending(o => o.solution).ToList();
+            }
 
             // Rysowanie najlepszego rozwiązania
             plotPoint(allSolutions[0]);
