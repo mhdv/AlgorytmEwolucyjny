@@ -106,6 +106,7 @@ namespace AlgorytmEwolucyjny
         void worker_RunWorkerCompleted2(object sender, RunWorkerCompletedEventArgs e)
         {
             pltModel.Model = (PlotModel)e.Result;
+            // Ustawianie maxymalnego zoomout wykresów/warstwic
             if (arguments.ToArray().Length > 1)
             {
                 pltModel.Model.DefaultXAxis.AbsoluteMaximum = arguments[0].Maximum;
