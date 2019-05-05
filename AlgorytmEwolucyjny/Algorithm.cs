@@ -33,7 +33,7 @@ namespace AlgorytmEwolucyjny
             actualPopulation = pop;
             nextPopulation = new Population();
             nextPopulation.populationSize = actualPopulation.populationSize;
-            for(int i = 0; i<actualPopulation.populationSize; i++)
+            for (int i = 0; i < actualPopulation.populationSize; i++)
             {
                 Subject child = new Subject();
                 Subject firstParent = new Subject();
@@ -41,27 +41,27 @@ namespace AlgorytmEwolucyjny
                 double firstChance = tmp.NextDouble();
                 int index = 0;
 
-                if(firstChance <= 0.4 * actualPopulation.populationSize)
+                if (firstChance <= 0.4 * actualPopulation.populationSize)
                 {
                     index = 0;
                     firstParent = actualPopulation.subjects.ToArray()[0];
                 }
-                else if(firstChance <= 0.60 * actualPopulation.populationSize)
+                else if (firstChance <= 0.60 * actualPopulation.populationSize)
                 {
                     index = 1;
                     firstParent = actualPopulation.subjects.ToArray()[1];
                 }
-                else if(firstChance <= 0.75 * actualPopulation.populationSize)
+                else if (firstChance <= 0.75 * actualPopulation.populationSize)
                 {
                     index = 2;
                     firstParent = actualPopulation.subjects.ToArray()[2];
                 }
-                else if(firstChance <= 0.85 * actualPopulation.populationSize)
+                else if (firstChance <= 0.85 * actualPopulation.populationSize)
                 {
                     index = 3;
                     firstParent = actualPopulation.subjects.ToArray()[3];
                 }
-                else if(firstChance > 0.85 * actualPopulation.populationSize)
+                else if (firstChance > 0.85 * actualPopulation.populationSize)
                 {
                     index = 4;
                     firstParent = actualPopulation.subjects.ToArray()[4];
@@ -92,69 +92,48 @@ namespace AlgorytmEwolucyjny
         private Subject ReproduceDefault(Subject first, Subject second)
         {
             Subject child = new Subject();
-            if ((tmp.NextDouble() * actualPopulation.populationSize) < 0.2)
+
+            child.nGenes = first.nGenes;
+            for (int i = 0; i < first.nGenes; i++)
             {
-                child.initSubject(first.arguments);
-                return child;
+                double y = 0.6 * first.values.ToArray()[i] + 0.4 * second.values.ToArray()[i] + 0.01 * ((tmp.NextDouble() * 20) - 10);
+                child.values.Add(y);
             }
-            else
+            child.stringValues.Clear();
+            child.valuesToString();
+            return child;
+        }
+
+        private Subject ReproduceMean(Subject first, Subject second)
+        {
+            if (iterations % 2 == 0)
             {
+                Subject child = new Subject();
+
                 child.nGenes = first.nGenes;
                 for (int i = 0; i < first.nGenes; i++)
                 {
-                    double y = 0.6 * first.values.ToArray()[i] + 0.4 * second.values.ToArray()[i] + 0.01 * ((tmp.NextDouble() * 20) - 10);
+                    double y = first.values.ToArray()[i] + tmp.NextDouble() * (second.values.ToArray()[i] - first.values.ToArray()[i]) + 0.01 * ((tmp.NextDouble() * 20) - 10);
                     child.values.Add(y);
                 }
                 child.stringValues.Clear();
                 child.valuesToString();
                 return child;
             }
-        }
-
-        private Subject ReproduceMean(Subject first, Subject second)
-        {
-            if(iterations%2 == 0)
-            {
-                Subject child = new Subject();
-                if ((tmp.NextDouble() * actualPopulation.populationSize) < 0.2)
-                {
-                    child.initSubject(first.arguments);
-                    return child;
-                }
-                else
-                {
-                    child.nGenes = first.nGenes;
-                    for (int i = 0; i < first.nGenes; i++)
-                    {
-                        double y = first.values.ToArray()[i] + tmp.NextDouble() * (second.values.ToArray()[i] - first.values.ToArray()[i]) + 0.01 * ((tmp.NextDouble() * 20) - 10);
-                        child.values.Add(y);
-                    }
-                    child.stringValues.Clear();
-                    child.valuesToString();
-                    return child;
-                }
-            }
             else
             {
                 Subject child = new Subject();
-                if ((tmp.NextDouble() * actualPopulation.populationSize) < 0.2)
+
+                child.nGenes = first.nGenes;
+                for (int i = 0; i < first.nGenes; i++)
                 {
-                    child.initSubject(first.arguments);
-                    return child;
+                    double y = first.values.ToArray()[i] + tmp.NextDouble() * (second.values.ToArray()[i] - first.values.ToArray()[i]) + 0.01 * ((tmp.NextDouble() * 20) - 10);
+                    double z = second.values.ToArray()[i] + first.values.ToArray()[i] - y;
+                    child.values.Add(z);
                 }
-                else
-                {
-                    child.nGenes = first.nGenes;
-                    for (int i = 0; i < first.nGenes; i++)
-                    {
-                        double y = first.values.ToArray()[i] + tmp.NextDouble() * (second.values.ToArray()[i] - first.values.ToArray()[i]) + 0.01 * ((tmp.NextDouble() * 20) - 10);
-                        double z = second.values.ToArray()[i] + first.values.ToArray()[i] - y;
-                        child.values.Add(z);
-                    }
-                    child.stringValues.Clear();
-                    child.valuesToString();
-                    return child;
-                }
+                child.stringValues.Clear();
+                child.valuesToString();
+                return child;
 
             }
         }
@@ -162,38 +141,30 @@ namespace AlgorytmEwolucyjny
         private Subject ReproduceTwopoint(Subject first, Subject second)
         {
             Subject child = new Subject();
-            if ((tmp.NextDouble() * actualPopulation.populationSize) < 0.2)
+
+            if (tmp.NextDouble() < 0.5)
             {
-                child.initSubject(first.arguments);
+                child.nGenes = first.nGenes;
+                for (int i = 0; i < first.nGenes; i++)
+                {
+                    double y = first.values.ToArray()[i] + 0.01 * ((tmp.NextDouble() * 20) - 10);
+                    child.values.Add(y);
+                }
+                child.stringValues.Clear();
+                child.valuesToString();
                 return child;
             }
             else
             {
-                if(tmp.NextDouble() < 0.5)
+                child.nGenes = first.nGenes;
+                for (int i = 0; i < first.nGenes; i++)
                 {
-                    child.nGenes = first.nGenes;
-                    for (int i = 0; i < first.nGenes; i++)
-                    {
-                        double y = first.values.ToArray()[i] + 0.01 * ((tmp.NextDouble() * 20) - 10);
-                        child.values.Add(y);
-                    }
-                    child.stringValues.Clear();
-                    child.valuesToString();
-                    return child;
+                    double y = second.values.ToArray()[i] + 0.01 * ((tmp.NextDouble() * 20) - 10);
+                    child.values.Add(y);
                 }
-                else
-                {
-                    child.nGenes = first.nGenes;
-                    for (int i = 0; i < first.nGenes; i++)
-                    {
-                        double y = second.values.ToArray()[i] + 0.01 * ((tmp.NextDouble() * 20) - 10);
-                        child.values.Add(y);
-                    }
-                    child.stringValues.Clear();
-                    child.valuesToString();
-                    return child;
-                }
-                
+                child.stringValues.Clear();
+                child.valuesToString();
+                return child;
             }
         }
 

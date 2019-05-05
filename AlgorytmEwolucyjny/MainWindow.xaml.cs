@@ -376,6 +376,7 @@ namespace AlgorytmEwolucyjny
             comboFunctions.Items.Add("4*x1^2-2.1*x1^4+(1/3)*x1^6+x1*x2-4*x2^2+4*x2^4");
             comboFunctions.Items.Add("sin(5.1*pi*x1+0.5)^6");
             comboFunctions.Items.Add("(x1+3)^2+(x2-4)^2");
+            comboFunctions.Items.Add("(x1^2+x2-11)^2+(x1+x2^2-7)^2-200");
             comboFunctions.Items.Add("(1+(((x1+x2+1)^2)*(19-14*x1+3*x1^2-14*x2+6*x1*x2+3*x2^2)))*((30+((2*x1-3*x2)^2)*(18-32*x1+12*x1^2+48*x2-36*x1*x2+27*x2^2)))");
             // Inicjalizacja comboReproductionMethod
             comboReproductionMethod.Items.Add("Domyślna");
