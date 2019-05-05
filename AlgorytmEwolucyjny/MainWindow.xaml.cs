@@ -106,6 +106,23 @@ namespace AlgorytmEwolucyjny
         void worker_RunWorkerCompleted2(object sender, RunWorkerCompletedEventArgs e)
         {
             pltModel.Model = (PlotModel)e.Result;
+            if (arguments.ToArray().Length > 1)
+            {
+                pltModel.Model.DefaultXAxis.AbsoluteMaximum = arguments[0].Maximum;
+                pltModel.Model.DefaultXAxis.AbsoluteMinimum = arguments[0].Minimum;
+                pltModel.Model.DefaultYAxis.AbsoluteMinimum = arguments[1].Minimum;
+                pltModel.Model.DefaultYAxis.AbsoluteMaximum = arguments[1].Maximum;
+                pltModel.InvalidatePlot(true);
+            }
+            else
+            {
+                pltModel.Model.DefaultXAxis.AbsoluteMaximum = arguments[0].Maximum;
+                pltModel.Model.DefaultXAxis.AbsoluteMinimum = arguments[0].Minimum;
+                pltModel.Model.DefaultYAxis.AbsoluteMinimum = arguments[0].Minimum;
+                pltModel.Model.DefaultYAxis.AbsoluteMaximum = arguments[0].Maximum;
+                pltModel.InvalidatePlot(true);
+            }
+                
             plotBusy = false;
         }
         

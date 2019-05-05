@@ -38,4 +38,3 @@ C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\bin\Debug
 C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\bin\Debug\OxyPlot.xml
 C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\bin\Debug\OxyPlot.Wpf.pdb
 C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\bin\Debug\OxyPlot.Wpf.xml
-C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\obj\Debug\GeneratedInternalTypeHelper.g.cs
