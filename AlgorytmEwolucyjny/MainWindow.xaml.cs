@@ -123,7 +123,9 @@ namespace AlgorytmEwolucyjny
                 pltModel.Model.DefaultYAxis.AbsoluteMaximum = arguments[0].Maximum;
                 pltModel.InvalidatePlot(true);
             }
-                
+            pltModel.Model.DefaultXAxis.MajorGridlineStyle = LineStyle.Dot;
+            pltModel.Model.DefaultYAxis.MajorGridlineStyle = LineStyle.Dot;
+
             plotBusy = false;
         }
         
