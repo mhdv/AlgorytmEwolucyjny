@@ -93,6 +93,9 @@ namespace AlgorytmEwolucyjny
                 btnEquation.IsEnabled = false;
                 plotRefresh.IsEnabled = false;
                 plotOnlyBest.IsEnabled = false;
+                txtEquation.IsEnabled = false;
+                comboFunctions.IsEnabled = false;
+                variablesGrid.IsEnabled = false;
 
                 model = new PlotModel();
                 BackgroundWorker worker2 = new BackgroundWorker();
@@ -117,25 +120,31 @@ namespace AlgorytmEwolucyjny
             btnEquation.IsEnabled = true;
             plotRefresh.IsEnabled = true;
             plotOnlyBest.IsEnabled = true;
+            txtEquation.IsEnabled = true;
+            comboFunctions.IsEnabled = true;
+            variablesGrid.IsEnabled = true;
             // Ustawianie maxymalnego zoomout wykresów/warstwic
-            if (arguments.ToArray().Length > 1)
+            if(pltModel.Model != null)
             {
-                pltModel.Model.DefaultXAxis.AbsoluteMaximum = arguments[0].Maximum;
-                pltModel.Model.DefaultXAxis.AbsoluteMinimum = arguments[0].Minimum;
-                pltModel.Model.DefaultYAxis.AbsoluteMinimum = arguments[1].Minimum;
-                pltModel.Model.DefaultYAxis.AbsoluteMaximum = arguments[1].Maximum;
-                pltModel.InvalidatePlot(true);
+                if (arguments.ToArray().Length > 1)
+                {
+                    pltModel.Model.DefaultXAxis.AbsoluteMaximum = arguments[0].Maximum;
+                    pltModel.Model.DefaultXAxis.AbsoluteMinimum = arguments[0].Minimum;
+                    pltModel.Model.DefaultYAxis.AbsoluteMinimum = arguments[1].Minimum;
+                    pltModel.Model.DefaultYAxis.AbsoluteMaximum = arguments[1].Maximum;
+                    pltModel.InvalidatePlot(true);
+                }
+                else
+                {
+                    pltModel.Model.DefaultXAxis.AbsoluteMaximum = arguments[0].Maximum;
+                    pltModel.Model.DefaultXAxis.AbsoluteMinimum = arguments[0].Minimum;
+                    pltModel.Model.DefaultYAxis.AbsoluteMinimum = arguments[0].Minimum;
+                    pltModel.Model.DefaultYAxis.AbsoluteMaximum = arguments[0].Maximum;
+                    pltModel.InvalidatePlot(true);
+                }
+                pltModel.Model.DefaultXAxis.MajorGridlineStyle = LineStyle.Dot;
+                pltModel.Model.DefaultYAxis.MajorGridlineStyle = LineStyle.Dot;
             }
-            else
-            {
-                pltModel.Model.DefaultXAxis.AbsoluteMaximum = arguments[0].Maximum;
-                pltModel.Model.DefaultXAxis.AbsoluteMinimum = arguments[0].Minimum;
-                pltModel.Model.DefaultYAxis.AbsoluteMinimum = arguments[0].Minimum;
-                pltModel.Model.DefaultYAxis.AbsoluteMaximum = arguments[0].Maximum;
-                pltModel.InvalidatePlot(true);
-            }
-            pltModel.Model.DefaultXAxis.MajorGridlineStyle = LineStyle.Dot;
-            pltModel.Model.DefaultYAxis.MajorGridlineStyle = LineStyle.Dot;
 
             plotBusy = false;
         }
