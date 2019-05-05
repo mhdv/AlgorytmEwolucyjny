@@ -293,7 +293,7 @@ namespace AlgorytmEwolucyjny
             // Jeśli liczba argumentów = 1 to rysujemy wykres
             else
             {
-                p = p * 10; // zmieniamy dokładność na 10-krotnie większą od ustalonej ze względu na mniejszą złożoność obliczeniową
+                p = p * 30; // zmieniamy dokładność na 30-krotnie większą od ustalonej ze względu na mniejszą złożoność obliczeniową
                 model.Title = "Wykres: ";   // tytuł modelu to wykres
                 LineSeries series1 = new LineSeries();  // zmienna lineseries używana do rysowania wykresów
                 List<double[]> xy = new List<double[]>();   // lista tablic tak jak w poprzednim przypadku - tutaj przechowuje tylko jeden argument, ale zachowanie konwencji ułatwiło dalsze zadania
@@ -326,7 +326,7 @@ namespace AlgorytmEwolucyjny
                 // Kolor wykresu ustalamy na czerwony - tak żeby wykresy i warstwice były tego samego koloru
                 series1.Color = OxyColors.Red;
                 model.Series.Add(series1);
-                p = p / 10; // przywracamy domyślną wartość zmiennej odpowiadającej za dokładność wykresu
+                p = p / 30; // przywracamy domyślną wartość zmiennej odpowiadającej za dokładność wykresu
             }
 
             // Czyścimy listę argumentów w postaci łańcuchów znaków
