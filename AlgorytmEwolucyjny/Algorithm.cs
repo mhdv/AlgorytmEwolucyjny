@@ -10,12 +10,17 @@ namespace AlgorytmEwolucyjny
     {
         public int method;
         public int iterations;
+        public int strategy;
         Population actualPopulation;
         Population nextPopulation;
+        Population previousPopulation;
         static Random tmp = new Random(333);
+        public int minmax;
 
-        public void AlgorithmInit(int meth, int iter)
+        public void AlgorithmInit(int meth, int iter, int strat, int mm)
         {
+            minmax = mm;
+            strategy = strat;
             method = meth;
             iterations = iter;
         }
@@ -30,6 +35,30 @@ namespace AlgorytmEwolucyjny
         public Population RunAlgorithm(Population pop)
         {
             tmp = new Random(333);
+            previousPopulation = actualPopulation;
+            if(previousPopulation != null)
+            {
+                if (strategy == 1)
+                    actualPopulation = pop;
+                else
+                {
+                    if (minmax == 0)
+                    {
+                        if (previousPopulation.subjects[0].solution < pop.subjects[0].solution)
+                            actualPopulation = previousPopulation;
+                        else
+                            actualPopulation = pop;
+                    }
+                    else
+                    {
+                        if (previousPopulation.subjects[0].solution > pop.subjects[0].solution)
+                            actualPopulation = previousPopulation;
+                        else
+                            actualPopulation = pop;
+                    }
+
+                }
+            }
             actualPopulation = pop;
             nextPopulation = new Population();
             nextPopulation.populationSize = actualPopulation.populationSize;
@@ -64,7 +93,7 @@ namespace AlgorytmEwolucyjny
                 else if (firstChance > 0.85 * actualPopulation.populationSize)
                 {
                     index = 4;
-                    firstParent = actualPopulation.subjects.ToArray()[4];
+                    firstParent = actualPopulation.subjects.ToArray()[new Random().Next(4,actualPopulation.populationSize-1)];
                 }
                 secondParent = actualPopulation.subjects.ToArray()[index + 1];
 
@@ -85,7 +114,6 @@ namespace AlgorytmEwolucyjny
                 }
                 nextPopulation.subjects.Add(child);
             }
-            actualPopulation = new Population();
             return nextPopulation;
         }
 

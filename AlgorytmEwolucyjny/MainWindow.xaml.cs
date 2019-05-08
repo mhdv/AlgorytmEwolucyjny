@@ -13,8 +13,14 @@ using System.Windows.Input;
 using org.mariuszgromada.math.mxparser;
 using org.mariuszgromada.math.mxparser.parsertokens;
 using OxyPlot;
-using OxyPlot.Axes;
 using OxyPlot.Series;
+using System.Windows.Interop;
+using System.Diagnostics;
+using ILNumerics.Drawing;
+using ILNumerics.Drawing.Plotting;
+using Ciloci.Flee;
+using ILNumerics;
+using System.Drawing;
 
 /*
 PRZYKŁADY FUNKCJI
@@ -69,6 +75,9 @@ namespace AlgorytmEwolucyjny
         int p = 400;    // zmienna pomocnicza określająca dokładność wykresu
         PlotModel model = new PlotModel();  // model do plotowania
         bool plotBusy = false;  // czy model jest aktualnie plotowany?
+        PositionsBuffer buffer = new PositionsBuffer(); // buffer do modelu 3D
+        RetArray<float> arr;
+        Array<float> sigma;
         int minmax = 0;
         
         //
@@ -76,9 +85,12 @@ namespace AlgorytmEwolucyjny
         //
         public MainWindow()
         {
+            if (Debugger.IsAttached)
+                CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("en-US");
             InitializeComponent();
             InitializeOtherComponents();
             variablesGrid.CellEditEnding += myDG_CellEditEnding;
+            plotSurfaceBtn.IsEnabled = false;
         }
 
         //
@@ -96,6 +108,7 @@ namespace AlgorytmEwolucyjny
                 txtEquation.IsEnabled = false;
                 comboFunctions.IsEnabled = false;
                 variablesGrid.IsEnabled = false;
+                plotSurfaceBtn.IsEnabled = false;
 
                 model = new PlotModel();
                 BackgroundWorker worker2 = new BackgroundWorker();
@@ -147,6 +160,14 @@ namespace AlgorytmEwolucyjny
             }
 
             plotBusy = false;
+            if(arguments.ToArray().Length > 1)
+            {
+                plotSurfaceBtn.IsEnabled = true;
+            }
+            else
+            {
+                plotSurfaceBtn.IsEnabled = false;
+            }
         }
 
         //
@@ -308,6 +329,26 @@ namespace AlgorytmEwolucyjny
                         (sender as BackgroundWorker).ReportProgress(progressPercentage);
                     }
                 }
+                
+                buffer = new PositionsBuffer();
+                sigma = new float[,]{};
+                int m = 0;
+                for (int i = 0; i < p; ++i)
+                {
+                    for (int j = 0; j < p; ++j)
+                    {
+                        sigma[m, 0] = (float)data[i, j];
+                        sigma[m, 1] = (float)xy[0][i];
+                        sigma[m, 2] = (float)xy[1][j];
+                        m++;
+                    }
+                }
+                arr = sigma;
+                //for (int i = 0; i < m; ++i)
+                //Console.WriteLine(SpecialData.sincf(40, 60, 2.5f)[0, 0] + "; " + SpecialData.sincf(40, 60, 2.5f)[0, 1] + "; " + SpecialData.sincf(40, 60, 2.5f)[0, 2]);
+                //Console.WriteLine(arr[0, 2]);
+                m = 0;
+                buffer.Update(sigma);
 
                 // Tworzenie zmiennej kontur - wykorzystywana do rysowania warstwic
                 var cs = new ContourSeries
@@ -439,6 +480,9 @@ namespace AlgorytmEwolucyjny
             // Inicjalizacja comboFind
             comboFind.Items.Add("Minimum");
             comboFind.Items.Add("Maximum");
+            // Inicjalizacja comboStrategy
+            comboStrategy.Items.Add("Algorytm Ewolucyjny: Strategia (1 + 1)");
+            comboStrategy.Items.Add("Algorytm Genetyczny");
         }
 
         //
@@ -519,7 +563,7 @@ namespace AlgorytmEwolucyjny
             f = new Function("f(" + commaSeparatedArguments + ") = " + equationString);
 
             // Tworzenie populacji i jej inicjalizacja / inicjalizacja algorytmu
-            algorithm.AlgorithmInit(comboReproductionMethod.SelectedIndex, System.Int32.Parse(txtIterations.Text));
+            algorithm.AlgorithmInit(comboReproductionMethod.SelectedIndex, System.Int32.Parse(txtIterations.Text), comboStrategy.SelectedIndex, minmax);
             population.initPopulation(arguments, System.Convert.ToInt32(txtPopulationSize.Text));
 
             // Progressbar algorytmu przyjmuje początkową wartość 0
@@ -529,6 +573,7 @@ namespace AlgorytmEwolucyjny
             btnEquation.IsEnabled = false;
             plotRefresh.IsEnabled = false;
             plotOnlyBest.IsEnabled = false;
+            plotSurfaceBtn.IsEnabled = false;
 
             minmax = comboFind.SelectedIndex;
 
@@ -748,5 +793,69 @@ namespace AlgorytmEwolucyjny
             if(allSolutions.ToArray().Length>0)
                 plotPoint(allSolutions[0]);
         }
+
+        private void PlotSurfaceBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //var scene = 
+            //  new PlotCube(twoDMode: false) {
+            // // rotate plot cube
+            // Rotation = Matrix4.Rotation(new Vector3(-1,1,.1f),0.4f),
+            // // perspective projection
+            // Projection = Projection.Perspective,
+            //    Children = {
+            //   // add line plot, provide data as rows 
+            //   new Points {
+            //        Positions = buffer,
+            //        Color = System.Drawing.Color.Red
+            //      }
+            //    }
+
+            //};
+            //Array<float> zs = new float[] { };
+            //Array<float> xs = new float[] { };
+            //Array<float> ys = new float[] { };
+            //for (int i = 0; i < p * p; ++i)
+            //{
+            //    zs[i] = sigma[i, 0];
+            //    Console.WriteLine(zs[i]);
+            //    xs[i] = sigma[i, 1];
+            //    Console.WriteLine(xs[i]);
+            //    ys[i] = sigma[i, 2];
+            //    Console.WriteLine(ys[i]);
+            //}
+            //InArray<float> zs1 = zs;
+            //InArray<float> xs1 = xs;
+            //InArray<float> ys1 = ys;
+            //Console.WriteLine(zs1.Length);
+            //Console.WriteLine(xs1.Length);
+            //Console.WriteLine(ys1.Length);
+            var scene = new PlotCube(twoDMode: false) {
+                // add a surface
+                new Surface(sigma) {
+                    // make thin transparent wireframes
+                    Wireframe = { Color = Color.FromArgb(50, Color.LightGray) },
+                    // choose a different colormap
+                    Colormap = Colormaps.Jet,
+                }
+            };
+            scene.First<PlotCube>().Rotation = Matrix4.Rotation(new Vector3(1f, 0.23f, 1), 0.7f);
+            PlotSurface form = new PlotSurface(scene);
+            form.Refresh();
+            form.ShowDialog();
+        }
+    //    public Func<double, double> CreateExpressionForX(string expression)
+    //    {
+    //        ExpressionContext context = new ExpressionContext();
+    //        // Define some variables
+    //        context.Variables["x"] = 0.0d;
+
+    //        // Use the variables in the expression
+    //        Flee.IDynamicExpression e = context.CompileDynamic(expression);
+
+
+    //        Func<double, double> expressionEvaluator = new Func<double, double>();
+
+    //return expressionEvaluator;
+    //    }
     }
 }
