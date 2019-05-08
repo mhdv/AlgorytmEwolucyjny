@@ -25,7 +25,8 @@ namespace AlgorytmEwolucyjny
         // Initial plot setup, modify this as needed
         private void ilPanel1_Load(object sender, EventArgs e)
         {
-            ilPanel1.Scene.Add(scene);
+            if(scene != null)
+                ilPanel1.Scene.Add(scene);
         }
 
         /// <summary>

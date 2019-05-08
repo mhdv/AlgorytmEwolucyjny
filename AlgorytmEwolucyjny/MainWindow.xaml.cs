@@ -76,7 +76,6 @@ namespace AlgorytmEwolucyjny
         PlotModel model = new PlotModel();  // model do plotowania
         bool plotBusy = false;  // czy model jest aktualnie plotowany?
         PositionsBuffer buffer = new PositionsBuffer(); // buffer do modelu 3D
-        RetArray<float> arr;
         Array<float> sigma;
         int minmax = 0;
         
@@ -331,24 +330,7 @@ namespace AlgorytmEwolucyjny
                 }
                 
                 buffer = new PositionsBuffer();
-                sigma = new float[,]{};
-                int m = 0;
-                for (int i = 0; i < p; ++i)
-                {
-                    for (int j = 0; j < p; ++j)
-                    {
-                        sigma[m, 0] = (float)data[i, j];
-                        sigma[m, 1] = (float)xy[0][i];
-                        sigma[m, 2] = (float)xy[1][j];
-                        m++;
-                    }
-                }
-                arr = sigma;
-                //for (int i = 0; i < m; ++i)
-                //Console.WriteLine(SpecialData.sincf(40, 60, 2.5f)[0, 0] + "; " + SpecialData.sincf(40, 60, 2.5f)[0, 1] + "; " + SpecialData.sincf(40, 60, 2.5f)[0, 2]);
-                //Console.WriteLine(arr[0, 2]);
-                m = 0;
-                buffer.Update(sigma);
+                sigma = data;
 
                 // Tworzenie zmiennej kontur - wykorzystywana do rysowania warstwic
                 var cs = new ContourSeries
@@ -751,6 +733,7 @@ namespace AlgorytmEwolucyjny
             btnEquation.IsEnabled = true;
             plotRefresh.IsEnabled = true;
             plotOnlyBest.IsEnabled = true;
+            plotSurfaceBtn.IsEnabled = true;
 
             // MessageBox informujący o ukończeniu działania algorytmu
             MessageBox.Show("Obliczono rozwiązania", "Ukończono", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -796,66 +779,26 @@ namespace AlgorytmEwolucyjny
 
         private void PlotSurfaceBtn_Click(object sender, RoutedEventArgs e)
         {
-            //var scene = 
-            //  new PlotCube(twoDMode: false) {
-            // // rotate plot cube
-            // Rotation = Matrix4.Rotation(new Vector3(-1,1,.1f),0.4f),
-            // // perspective projection
-            // Projection = Projection.Perspective,
-            //    Children = {
-            //   // add line plot, provide data as rows 
-            //   new Points {
-            //        Positions = buffer,
-            //        Color = System.Drawing.Color.Red
-            //      }
-            //    }
 
-            //};
-            //Array<float> zs = new float[] { };
-            //Array<float> xs = new float[] { };
-            //Array<float> ys = new float[] { };
-            //for (int i = 0; i < p * p; ++i)
-            //{
-            //    zs[i] = sigma[i, 0];
-            //    Console.WriteLine(zs[i]);
-            //    xs[i] = sigma[i, 1];
-            //    Console.WriteLine(xs[i]);
-            //    ys[i] = sigma[i, 2];
-            //    Console.WriteLine(ys[i]);
-            //}
-            //InArray<float> zs1 = zs;
-            //InArray<float> xs1 = xs;
-            //InArray<float> ys1 = ys;
-            //Console.WriteLine(zs1.Length);
-            //Console.WriteLine(xs1.Length);
-            //Console.WriteLine(ys1.Length);
+            var B = ILMath.tosingle(sigma);
             var scene = new PlotCube(twoDMode: false) {
                 // add a surface
-                new Surface(sigma) {
+                new Surface(B) {
                     // make thin transparent wireframes
                     Wireframe = { Color = Color.FromArgb(50, Color.LightGray) },
                     // choose a different colormap
                     Colormap = Colormaps.Jet,
                 }
             };
+            scene.Axes.XAxis.Max = (float)arguments[0].Maximum;
+            scene.Axes.XAxis.Min = (float)arguments[0].Minimum;
+            scene.Axes.YAxis.Max = (float)arguments[1].Maximum;
+            scene.Axes.YAxis.Min = (float)arguments[1].Minimum;
             scene.First<PlotCube>().Rotation = Matrix4.Rotation(new Vector3(1f, 0.23f, 1), 0.7f);
+            
             PlotSurface form = new PlotSurface(scene);
             form.Refresh();
             form.ShowDialog();
         }
-    //    public Func<double, double> CreateExpressionForX(string expression)
-    //    {
-    //        ExpressionContext context = new ExpressionContext();
-    //        // Define some variables
-    //        context.Variables["x"] = 0.0d;
-
-    //        // Use the variables in the expression
-    //        Flee.IDynamicExpression e = context.CompileDynamic(expression);
-
-
-    //        Func<double, double> expressionEvaluator = new Func<double, double>();
-
-    //return expressionEvaluator;
-    //    }
     }
 }
