@@ -16,6 +16,7 @@ namespace AlgorytmEwolucyjny
         Population previousPopulation;
         static Random tmp = new Random(333);
         public int minmax;
+        public double miFactor;
 
         public void AlgorithmInit(int meth, int iter, int strat, int mm)
         {
@@ -35,31 +36,42 @@ namespace AlgorytmEwolucyjny
         public Population RunAlgorithm(Population pop)
         {
             tmp = new Random(333);
-            previousPopulation = actualPopulation;
-            if(previousPopulation != null)
+            if (previousPopulation == actualPopulation)
+                previousPopulation = pop;
+            else
+                previousPopulation = actualPopulation;
+            switch (strategy)
             {
-                if (strategy == 1)
-                    actualPopulation = pop;
-                else
-                {
-                    if (minmax == 0)
+                case 0:
+                    if (previousPopulation != null)
                     {
-                        if (previousPopulation.subjects[0].solution < pop.subjects[0].solution)
-                            actualPopulation = previousPopulation;
+                        if (minmax == 0)
+                        {
+                            if (previousPopulation.subjects[0].solution < pop.subjects[0].solution)
+                                actualPopulation = previousPopulation;
+                            else
+                                actualPopulation = pop;
+                        }
                         else
-                            actualPopulation = pop;
+                        {
+                            if (previousPopulation.subjects[0].solution > pop.subjects[0].solution)
+                                actualPopulation = previousPopulation;
+                            else
+                                actualPopulation = pop;
+                        }
                     }
                     else
                     {
-                        if (previousPopulation.subjects[0].solution > pop.subjects[0].solution)
-                            actualPopulation = previousPopulation;
-                        else
-                            actualPopulation = pop;
+                        actualPopulation = pop;
                     }
-
-                }
+                    break;
+                case 1:
+                    actualPopulation = pop;
+                    break;
+                default:
+                    actualPopulation = pop;
+                    break;
             }
-            actualPopulation = pop;
             nextPopulation = new Population();
             nextPopulation.populationSize = actualPopulation.populationSize;
             for (int i = 0; i < actualPopulation.populationSize; i++)
@@ -113,6 +125,25 @@ namespace AlgorytmEwolucyjny
                         break;
                 }
                 nextPopulation.subjects.Add(child);
+            }
+            switch (strategy)
+            {
+                case 0:
+                    break;
+                case 1:
+                    Population newPop = new Population() { populationSize = 2 * (int)miFactor };
+                    for (int i = 0; i < (int)miFactor; ++i)
+                    {
+                        if (minmax == 0)
+                            nextPopulation.subjects = nextPopulation.subjects.OrderBy(o => o.solution).ToList();
+                        else
+                            nextPopulation.subjects = nextPopulation.subjects.OrderByDescending(o => o.solution).ToList();
+                        newPop.subjects.Add(nextPopulation.subjects[i]);
+                        newPop.subjects.Add(actualPopulation.subjects[i]);
+                    }
+                    return newPop;
+                default:
+                    break;
             }
             return nextPopulation;
         }
@@ -175,7 +206,11 @@ namespace AlgorytmEwolucyjny
                 child.nGenes = first.nGenes;
                 for (int i = 0; i < first.nGenes; i++)
                 {
-                    double y = first.values.ToArray()[i] + 0.01 * ((tmp.NextDouble() * 20) - 10);
+                    double y;
+                    if (tmp.NextDouble() < 0.85)
+                        y = first.values.ToArray()[i] + 0.025 * ((tmp.NextDouble() * 20) - 10);
+                    else
+                        y = first.values.ToArray()[i] + 2 * ((tmp.NextDouble() * 20) - 10);
                     child.values.Add(y);
                 }
                 child.stringValues.Clear();
@@ -187,7 +222,11 @@ namespace AlgorytmEwolucyjny
                 child.nGenes = first.nGenes;
                 for (int i = 0; i < first.nGenes; i++)
                 {
-                    double y = second.values.ToArray()[i] + 0.01 * ((tmp.NextDouble() * 20) - 10);
+                    double y;
+                    if (tmp.NextDouble() < 0.85)
+                        y = second.values.ToArray()[i] + 0.025 * ((tmp.NextDouble() * 20) - 10);
+                    else
+                        y = second.values.ToArray()[i] + 2 * ((tmp.NextDouble() * 20) - 10);
                     child.values.Add(y);
                 }
                 child.stringValues.Clear();

@@ -454,6 +454,7 @@ namespace AlgorytmEwolucyjny
             comboFunctions.Items.Add("sin(5.1*pi*x1+0.5)^6");
             comboFunctions.Items.Add("(x1+3)^2+(x2-4)^2");
             comboFunctions.Items.Add("(x1^2+x2-11)^2+(x1+x2^2-7)^2-200");
+            comboFunctions.Items.Add("exp((-2*log10(2)*(((x1-0.08)^2)/((0.854)^2))))*sin(5*pi*((x1^0.75)-0.05))^6");
             comboFunctions.Items.Add("(1+(((x1+x2+1)^2)*(19-14*x1+3*x1^2-14*x2+6*x1*x2+3*x2^2)))*((30+((2*x1-3*x2)^2)*(18-32*x1+12*x1^2+48*x2-36*x1*x2+27*x2^2)))");
             // Inicjalizacja comboReproductionMethod
             comboReproductionMethod.Items.Add("Domyślna");
@@ -464,6 +465,7 @@ namespace AlgorytmEwolucyjny
             comboFind.Items.Add("Maximum");
             // Inicjalizacja comboStrategy
             comboStrategy.Items.Add("Algorytm Ewolucyjny: Strategia (1 + 1)");
+            comboStrategy.Items.Add("Algorytm Ewolucyjny: Strategia (μ + λ)");
             comboStrategy.Items.Add("Algorytm Genetyczny");
         }
 
@@ -480,6 +482,14 @@ namespace AlgorytmEwolucyjny
             {
                 MessageBox.Show("Populacja powinna być większa niż 5!", "Błąd!", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
+            }
+            if (miFact.IsEnabled)
+            {
+                if(System.Int32.Parse(miFact.Text) > System.Int32.Parse(txtPopulationSize.Text))
+                {
+                    MessageBox.Show("Współczynnik μ nie może być większy od populacji!", "Błąd!", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
             }
 
             // Inicjalizacja zmiennych
@@ -546,6 +556,8 @@ namespace AlgorytmEwolucyjny
 
             // Tworzenie populacji i jej inicjalizacja / inicjalizacja algorytmu
             algorithm.AlgorithmInit(comboReproductionMethod.SelectedIndex, System.Int32.Parse(txtIterations.Text), comboStrategy.SelectedIndex, minmax);
+            if (comboStrategy.SelectedIndex == 1)
+                algorithm.miFactor = System.Int32.Parse(miFact.Text);
             population.initPopulation(arguments, System.Convert.ToInt32(txtPopulationSize.Text));
 
             // Progressbar algorytmu przyjmuje początkową wartość 0
@@ -715,7 +727,7 @@ namespace AlgorytmEwolucyjny
             plotPoint(allSolutions[0]);
 
             // Wypisanie najlepszego znalezionego rozwiązania
-            tmpSolution.Text = "Znalezione rozwiązania przy populacji wielkości " + txtPopulationSize.Text + ":\n";
+            tmpSolution.Text = "Znalezione rozwiązania przy końcowej populacji wielkości " + population.populationSize + ":\n";
             tmpSolution.Text += "#######################################\n";
             tmpSolution.Text += "(" + commaSeparatedArguments + ") = " + "(" + string.Join(", ", allSolutions[0].stringValues) + ")" + "\n";
             tmpSolution.Text += "Rozwiązanie:   " + allSolutions[0].solution + "\n";
@@ -799,6 +811,14 @@ namespace AlgorytmEwolucyjny
             PlotSurface form = new PlotSurface(scene);
             form.Refresh();
             form.ShowDialog();
+        }
+
+        private void ComboStrategy_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (comboStrategy.SelectedIndex == 1)
+                miFact.IsEnabled = true;
+            else
+                miFact.IsEnabled = false;
         }
     }
 }

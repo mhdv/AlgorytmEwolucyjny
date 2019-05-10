@@ -32,6 +32,13 @@ C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\obj\Relea
 C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\bin\Release\AlgorytmEwolucyjny.pdb
 C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\obj\Release\MainWindow.baml
 C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\obj\Release\AlgorytmEwolucyjny.exe
+C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\bin\Release\ControlzEx.dll
+C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\bin\Release\MahApps.Metro.dll
+C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\bin\Release\Microsoft.Xaml.Behaviors.dll
+C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\bin\Release\ControlzEx.xml
+C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\bin\Release\MahApps.Metro.pdb
+C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\bin\Release\MahApps.Metro.xml
+C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\bin\Release\Microsoft.Xaml.Behaviors.xml
 C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\obj\Release\MainWindow.g.i.cs
 C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\obj\Release\App.g.i.cs
 C:\Users\mehow\Source\Repos\mhdv\AlgorytmEwolucyjny\AlgorytmEwolucyjny\obj\Release\AlgorytmEwolucyjny_MarkupCompile.i.cache

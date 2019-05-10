@@ -14,34 +14,36 @@
 			<TextBox x:Name="txtEquation" HorizontalAlignment="Left" Height="22" Margin="10,35,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="772" TextChanged="TxtEquation_TextChanged"/>
 			<Button x:Name="btnEquation" Content="Zatwierdź" HorizontalAlignment="Left" Margin="707,539,0,0" VerticalAlignment="Top" Width="75" Click="btnEquation_Click"/>
 			<TextBox x:Name="tmpSolution" HorizontalAlignment="Left" Margin="10,68,0,0" TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Auto" Text="Rozwiązanie: " VerticalAlignment="Top" Height="133" Width="423"/>
-			<TextBox x:Name="txtPopulationSize" HorizontalAlignment="Left" Height="23" Margin="618,356,0,0" TextWrapping="Wrap" Text="20" MaxLength="3" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Width="154" PreviewTextInput="PreviewTextInput" RenderTransformOrigin="0.567,3.217"/>
-			<TextBox x:Name="txtIterations" HorizontalAlignment="Left" Height="23" Margin="618,384,0,0" TextWrapping="Wrap" Text="50" MaxLength="4" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Width="154" PreviewTextInput="PreviewTextInput" RenderTransformOrigin="0.567,3.217"/>
+			<TextBox x:Name="txtPopulationSize" HorizontalAlignment="Left" Height="23" Margin="618,317,0,0" TextWrapping="Wrap" Text="20" MaxLength="3" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Width="154" PreviewTextInput="PreviewTextInput" RenderTransformOrigin="0.567,3.217"/>
+			<TextBox x:Name="txtIterations" HorizontalAlignment="Left" Height="23" Margin="618,345,0,0" TextWrapping="Wrap" Text="50" MaxLength="4" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Width="154" PreviewTextInput="PreviewTextInput" RenderTransformOrigin="0.567,3.217"/>
 			<Grid Background="Black" Height="491" Width="1" VerticalAlignment="Center" Margin="445,68,346,10"/>
-			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Wielkość populacji:" HorizontalAlignment="Left" Margin="462,356,0,0" VerticalAlignment="Top"/>
-			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Operator krzyżowania:" HorizontalAlignment="Left" Margin="462,414,0,0" VerticalAlignment="Top"/>
-			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Liczba iteracji:" HorizontalAlignment="Left" Margin="462,385,0,0" VerticalAlignment="Top"/>
+			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Wielkość populacji:" HorizontalAlignment="Left" Margin="462,317,0,0" VerticalAlignment="Top"/>
+			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Operator krzyżowania:" HorizontalAlignment="Left" Margin="462,375,0,0" VerticalAlignment="Top"/>
+			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Liczba iteracji:" HorizontalAlignment="Left" Margin="462,346,0,0" VerticalAlignment="Top"/>
 			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Wprowadź równanie (składnia MATLAB &quot;2*x1^2+sqrt(x2)&quot;...):" HorizontalAlignment="Left" Margin="10,6,0,0" VerticalAlignment="Top" Width="358"/>
 			<Grid Background="Black" Height="1" VerticalAlignment="Center" Margin="10,62,10,506"/>
-			<ComboBox x:Name="comboReproductionMethod" SelectedIndex="0" HorizontalAlignment="Left" Margin="618,412,0,0" VerticalAlignment="Top" Width="154"/>
+			<ComboBox x:Name="comboReproductionMethod" SelectedIndex="1" HorizontalAlignment="Left" Margin="618,373,0,0" VerticalAlignment="Top" Width="154"/>
 			<ComboBox x:Name="comboFunctions" SelectedIndex="0" HorizontalAlignment="Left" Margin="541,8,0,0" VerticalAlignment="Top" Width="241" SelectionChanged="ComboFunctions_SelectionChanged"/>
 			<Grid Background="Black" Height="24" Width="1" VerticalAlignment="Center" Margin="357,6,434,539"/>
 			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Przykładowe funkcje:" HorizontalAlignment="Left" Margin="414,6,0,0" VerticalAlignment="Top"/>
 			<Label Content="Autorzy: Michał Filipowicz &amp; Rafał Madeja" HorizontalAlignment="Left" Margin="451,533,0,0" VerticalAlignment="Top"/>
-			<DataGrid x:Name="variablesGrid" AutoGenerateColumns="True" HorizontalAlignment="Left" Height="192" Margin="462,94,0,0" VerticalAlignment="Top" Width="310"/>
+			<DataGrid x:Name="variablesGrid" AutoGenerateColumns="True" HorizontalAlignment="Left" Height="160" Margin="462,94,0,0" VerticalAlignment="Top" Width="310"/>
 			<ProgressBar x:Name="pbProgress" HorizontalAlignment="Left" Height="33" Margin="462,501,0,0" VerticalAlignment="Top" Width="320"/>
 			<TextBlock x:Name="txtProgress" HorizontalAlignment="Center" Margin="618,509,138,0" TextWrapping="Wrap" Text="0%" VerticalAlignment="Top" Width="36"/>
 			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Argumenty i przedziały punktów startowych:" HorizontalAlignment="Left" Margin="462,70,0,0" VerticalAlignment="Top"/>
 			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Postęp:" HorizontalAlignment="Left" Margin="462,477,0,0" VerticalAlignment="Top"/>
-			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Dokładność wykresu (próbki):" HorizontalAlignment="Left" Margin="462,443,0,0" VerticalAlignment="Top"/>
-			<TextBox x:Name="txtPlot" HorizontalAlignment="Left" Height="23" Margin="655,439,0,0" TextWrapping="Wrap" Text="40" MaxLength="3" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Width="117" PreviewTextInput="PreviewTextInput" RenderTransformOrigin="0.567,3.217" TextChanged="TxtPlot_TextChanged"/>
+			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Dokładność wykresu (próbki):" HorizontalAlignment="Left" Margin="462,404,0,0" VerticalAlignment="Top"/>
+			<TextBox x:Name="txtPlot" HorizontalAlignment="Left" Height="23" Margin="655,400,0,0" TextWrapping="Wrap" Text="40" MaxLength="3" VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Width="117" PreviewTextInput="PreviewTextInput" RenderTransformOrigin="0.567,3.217" TextChanged="TxtPlot_TextChanged"/>
 			<Button x:Name="plotRefresh" Content="Wymuś odświeżenie" HorizontalAlignment="Left" Margin="313,206,0,0" VerticalAlignment="Top" Width="119" Click="PlotRefresh_Click"/>
 			<Button x:Name="plotOnlyBest" Content="Zaznacz najlepszy" HorizontalAlignment="Left" Margin="10,206,0,0" VerticalAlignment="Top" Width="129" Click="PlotOnlyBest_Click"/>
-			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Szukaj:" HorizontalAlignment="Left" Margin="462,327,0,0" VerticalAlignment="Top"/>
-			<ComboBox x:Name="comboFind" SelectedIndex="0" HorizontalAlignment="Left" Margin="618,329,0,0" VerticalAlignment="Top" Width="154"/>
+			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Szukaj:" HorizontalAlignment="Left" Margin="462,288,0,0" VerticalAlignment="Top"/>
+			<ComboBox x:Name="comboFind" SelectedIndex="0" HorizontalAlignment="Left" Margin="618,290,0,0" VerticalAlignment="Top" Width="154"/>
 			<ProgressBar x:Name="plotPb" HorizontalAlignment="Left" Height="9" Margin="313,231,0,0" VerticalAlignment="Top" Width="119"/>
 			<Button x:Name="plotSurfaceBtn" Content="3D" HorizontalAlignment="Left" Margin="414,539,0,0" VerticalAlignment="Top" Width="26" Click="PlotSurfaceBtn_Click"/>
-			<ComboBox x:Name="comboStrategy" SelectedIndex="0" HorizontalAlignment="Left" Margin="541,302,0,0" VerticalAlignment="Top" Width="231"/>
-			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Strategia:" HorizontalAlignment="Left" Margin="462,302,0,0" VerticalAlignment="Top"/>
+			<ComboBox x:Name="comboStrategy" SelectedIndex="0" HorizontalAlignment="Left" Margin="541,263,0,0" VerticalAlignment="Top" Width="231" SelectionChanged="ComboStrategy_SelectionChanged"/>
+			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Strategia:" HorizontalAlignment="Left" Margin="462,263,0,0" VerticalAlignment="Top"/>
+			<Label FontFamily="Times New Roman" FontWeight="Bold" Content="Współczynnik μ:" HorizontalAlignment="Left" Margin="462,433,0,0" VerticalAlignment="Top"/>
+			<TextBox x:Name="miFact" IsEnabled="False" HorizontalAlignment="Left" Height="23" Margin="655,428,0,0" TextWrapping="Wrap" Text="10" VerticalAlignment="Top" PreviewTextInput="PreviewTextInput" Width="117"/>
 
 		</Grid>
 	</Viewbox>
